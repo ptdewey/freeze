@@ -7,6 +7,7 @@ import (
 	"github.com/ptdewey/freeze/internal/diff"
 	"github.com/ptdewey/freeze/internal/files"
 	"github.com/ptdewey/freeze/internal/pretty"
+	"github.com/ptdewey/freeze/internal/review"
 )
 
 const version = "0.1.0"
@@ -125,4 +126,16 @@ func formatValue(v any) string {
 	// 	return fmt.Sprint(v)
 	// }
 	return utter.Sdump(v)
+}
+
+func Review() error {
+	return review.Review()
+}
+
+func AcceptAll() error {
+	return review.AcceptAll()
+}
+
+func RejectAll() error {
+	return review.RejectAll()
 }
