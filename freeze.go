@@ -44,6 +44,15 @@ func snapWithTitle(t testingT, title string, content string) {
 		if accepted.Content == content {
 			return
 		}
+
+		if err := SaveSnapshot(snapshot, "new"); err != nil {
+			t.Error("failed to save snapshot:", err)
+			return
+		}
+
+		fmt.Println(DiffSnapshotBox(accepted, snapshot))
+		t.Error("snapshot mismatch - run 'freeze review' to update")
+		return
 	}
 
 	if err := SaveSnapshot(snapshot, "new"); err != nil {
@@ -51,7 +60,8 @@ func snapWithTitle(t testingT, title string, content string) {
 		return
 	}
 
-	t.Error("snapshot mismatch - run 'freeze review' to update")
+	fmt.Println(NewSnapshotBox(snapshot))
+	t.Error("new snapshot created - run 'freeze review' to accept")
 }
 
 func formatValues(values ...any) string {
