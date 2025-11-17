@@ -20,7 +20,6 @@ const (
 	AcceptAllChoice
 	RejectAllChoice
 	SkipAllChoice
-	// ToggleDiff
 	Quit
 )
 
@@ -48,7 +47,7 @@ func Review() error {
 		return nil
 	}
 
-	fmt.Println(pretty.Header("🐦 Freeze - Snapshot Review"))
+	fmt.Println(pretty.Header("Review Snapshots"))
 	fmt.Printf("Found %d new snapshot(s) to review\n\n", len(snapshots))
 
 	return reviewLoop(snapshots)
@@ -119,15 +118,6 @@ func reviewLoop(snapshots []string) error {
 			case SkipAllChoice:
 				fmt.Printf(pretty.Warning("⊘ Skipped %d snapshot(s)\n"), len(snapshots)-i)
 				return nil
-			// case ToggleDiff:
-			// 	showDiff = !showDiff
-			// 	if acceptErr == nil {
-			// 		diffLines := computeDiffLines(accepted, newSnap)
-			// 		fmt.Println(pretty.DiffSnapshotBox(accepted, newSnap, diffLines))
-			// 	} else {
-			// 		fmt.Println(pretty.NewSnapshotBox(newSnap))
-			// 	}
-			// continue
 			case Quit:
 				fmt.Println("\nReview interrupted")
 				return nil
@@ -163,8 +153,6 @@ func askChoice(reader *bufio.Reader, current, total int) (ReviewChoice, error) {
 		return RejectAllChoice, nil
 	case "S", "Skip All":
 		return SkipAllChoice, nil
-	// case "d", "diff":
-	// return ToggleDiff, nil
 	case "q", "quit":
 		return Quit, nil
 	default:

@@ -2,8 +2,8 @@ package freeze
 
 import (
 	"fmt"
-	"reflect"
 
+	"github.com/kortschak/utter"
 	"github.com/ptdewey/freeze/internal/diff"
 	"github.com/ptdewey/freeze/internal/files"
 	"github.com/ptdewey/freeze/internal/pretty"
@@ -106,22 +106,23 @@ func formatValue(v any) string {
 		return "<nil>"
 	}
 
-	if formattable, ok := v.(interface{ Format() string }); ok {
-		return formattable.Format()
-	}
-
-	if stringer, ok := v.(interface{ String() string }); ok {
-		return stringer.String()
-	}
-
-	val := reflect.ValueOf(v)
-	switch val.Kind() {
-	case reflect.String:
-		return v.(string)
-	case reflect.Struct, reflect.Slice, reflect.Array, reflect.Map:
-		// TODO: make this better probably (utter?)
-		return fmt.Sprintf("%#v", v)
-	default:
-		return fmt.Sprint(v)
-	}
+	// if formattable, ok := v.(interface{ Format() string }); ok {
+	// 	return formattable.Format()
+	// }
+	//
+	// if stringer, ok := v.(interface{ String() string }); ok {
+	// 	return stringer.String()
+	// }
+	//
+	// val := reflect.ValueOf(v)
+	// switch val.Kind() {
+	// case reflect.String:
+	// 	return v.(string)
+	// case reflect.Struct, reflect.Slice, reflect.Array, reflect.Map:
+	// 	// TODO: make this better probably (utter?)
+	// 	return fmt.Sprintf("%#v", v)
+	// default:
+	// 	return fmt.Sprint(v)
+	// }
+	return utter.Sdump(v)
 }
