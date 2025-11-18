@@ -37,8 +37,12 @@ func TestHistogramIdentical(t *testing.T) {
 		if dl.Kind != diff.DiffShared {
 			t.Errorf("line %d: expected DiffShared, got %v", i, dl.Kind)
 		}
-		if dl.Number != i+1 {
-			t.Errorf("line %d: expected Number=%d, got %d", i, i+1, dl.Number)
+		expectedLineNum := i + 1
+		if dl.OldNumber != expectedLineNum {
+			t.Errorf("line %d: expected OldNumber=%d, got %d", i, expectedLineNum, dl.OldNumber)
+		}
+		if dl.NewNumber != expectedLineNum {
+			t.Errorf("line %d: expected NewNumber=%d, got %d", i, expectedLineNum, dl.NewNumber)
 		}
 	}
 }
@@ -146,8 +150,12 @@ func TestHistogramLineNumbers(t *testing.T) {
 	result := diff.Histogram(old, new)
 
 	for i, dl := range result {
-		if dl.Number != i+1 {
-			t.Errorf("line %d: expected Number=%d, got %d", i, i+1, dl.Number)
+		expectedLineNum := i + 1
+		if dl.OldNumber != expectedLineNum {
+			t.Errorf("line %d: expected OldNumber=%d, got %d", i, expectedLineNum, dl.OldNumber)
+		}
+		if dl.NewNumber != expectedLineNum {
+			t.Errorf("line %d: expected NewNumber=%d, got %d", i, expectedLineNum, dl.NewNumber)
 		}
 	}
 }

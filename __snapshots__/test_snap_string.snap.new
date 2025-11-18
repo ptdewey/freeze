@@ -1,6 +1,0 @@
----
-test_name: TestSnapString
-file_path: /home/patrick/projects/freeze/freeze.go
-func_name: 
----
-hello world

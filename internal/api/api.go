@@ -53,9 +53,10 @@ func convertDiffLines(diffLines []diff.DiffLine) []pretty.DiffLine {
 	result := make([]pretty.DiffLine, len(diffLines))
 	for i, dl := range diffLines {
 		result[i] = pretty.DiffLine{
-			Number: dl.Number,
-			Line:   dl.Line,
-			Kind:   pretty.DiffKind(dl.Kind),
+			OldNumber: dl.OldNumber,
+			NewNumber: dl.NewNumber,
+			Line:      dl.Line,
+			Kind:      pretty.DiffKind(dl.Kind),
 		}
 	}
 	return result

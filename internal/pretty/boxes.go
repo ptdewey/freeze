@@ -9,9 +9,10 @@ import (
 )
 
 type DiffLine struct {
-	Number int
-	Line   string
-	Kind   DiffKind
+	OldNumber int
+	NewNumber int
+	Line      string
+	Kind      DiffKind
 }
 
 type DiffKind int
@@ -24,20 +25,20 @@ const (
 
 func newSnapshotBoxInternal(snap *files.Snapshot, isFuncSnapshot bool) string {
 	width := TerminalWidth()
+	snapshotFileName := files.SnapshotFileName(snap.Name) + ".snap.new"
 
 	var sb strings.Builder
-	sb.WriteString("─── " + "New Snapshot " + strings.Repeat("─", width-15) + "\n\n")
+	sb.WriteString("─── " + "New Snapshot " + strings.Repeat("─", width-15) + "\n")
+	sb.WriteString(fmt.Sprintf("  file: %s\n\n", Gray(snapshotFileName)))
 
+	if snap.Title != "" {
+		sb.WriteString(fmt.Sprintf("  title: %s\n", Blue("\""+snap.Title+"\"")))
+	}
 	if isFuncSnapshot && snap.FuncName != "" {
 		sb.WriteString(fmt.Sprintf("  func: %s\n", Blue("\""+snap.FuncName+"\"")))
 		sb.WriteString(fmt.Sprintf("  test: %s\n", Blue("\""+snap.Name+"\"")))
 	} else {
 		sb.WriteString(fmt.Sprintf("  test: %s\n", Blue("\""+snap.Name+"\"")))
-	}
-
-	sb.WriteString(fmt.Sprintf("  snapshot: %s\n", Gray(files.SnapshotFileName(snap.Name)+".snap.new")))
-	if snap.FilePath != "" {
-		sb.WriteString(fmt.Sprintf("  file: %s\n", Gray(snap.FilePath)))
 	}
 	sb.WriteString("\n")
 
@@ -74,38 +75,66 @@ func NewSnapshotBoxFunc(snap *files.Snapshot) string {
 	return newSnapshotBoxInternal(snap, true)
 }
 
-// TODO: diff should show old and new line numbers
 func DiffSnapshotBox(old, new *files.Snapshot, diffLines []DiffLine) string {
 	width := TerminalWidth()
+	snapshotFileName := files.SnapshotFileName(new.Name) + ".snap"
 
 	var sb strings.Builder
 	sb.WriteString(strings.Repeat("─", width) + "\n")
+	sb.WriteString(fmt.Sprintf("  file: %s\n", Gray(snapshotFileName)))
 	sb.WriteString(fmt.Sprintf("  %s\n", Blue("Snapshot Diff")))
-	if new.FilePath != "" {
-		sb.WriteString(fmt.Sprintf("  file: %s\n", Gray(new.FilePath)))
+	if new.Title != "" {
+		sb.WriteString(fmt.Sprintf("  title: %s\n", Blue("\""+new.Title+"\"")))
 	}
+	sb.WriteString(fmt.Sprintf("  test: %s\n", Blue("\""+new.Name+"\"")))
 	sb.WriteString(strings.Repeat("─", width) + "\n")
 
+	// Calculate max line numbers for proper spacing
+	maxOldNum := 0
+	maxNewNum := 0
 	for _, dl := range diffLines {
+		if dl.OldNumber > maxOldNum {
+			maxOldNum = dl.OldNumber
+		}
+		if dl.NewNumber > maxNewNum {
+			maxNewNum = dl.NewNumber
+		}
+	}
+	oldWidth := len(fmt.Sprintf("%d", maxOldNum))
+	newWidth := len(fmt.Sprintf("%d", maxNewNum))
+
+	for _, dl := range diffLines {
+		var oldNumStr, newNumStr string
 		var prefix string
 		var formatted string
 
 		switch dl.Kind {
 		case DiffOld:
+			oldNumStr = fmt.Sprintf("%*d", oldWidth, dl.OldNumber)
+			newNumStr = strings.Repeat(" ", newWidth)
 			prefix = Red("−")
 			formatted = Red(dl.Line)
 		case DiffNew:
+			oldNumStr = strings.Repeat(" ", oldWidth)
+			newNumStr = fmt.Sprintf("%*d", newWidth, dl.NewNumber)
 			prefix = Green("+")
 			formatted = Green(dl.Line)
 		case DiffShared:
+			oldNumStr = fmt.Sprintf("%*d", oldWidth, dl.OldNumber)
+			newNumStr = fmt.Sprintf("%*d", newWidth, dl.NewNumber)
 			prefix = " "
 			formatted = dl.Line
 		}
 
-		display := fmt.Sprintf("%s %s", prefix, formatted)
-		if len(display) > width-4 {
-			display = display[:width-7] + "..."
+		linePrefix := fmt.Sprintf("%s %s %s", Gray(oldNumStr), Gray(newNumStr), prefix)
+		display := fmt.Sprintf("%s %s", linePrefix, formatted)
+
+		// Adjust for actual display length considering ANSI codes
+		if len(dl.Line) > width-oldWidth-newWidth-8 {
+			formatted = formatted[:width-oldWidth-newWidth-11] + "..."
+			display = fmt.Sprintf("%s %s", linePrefix, formatted)
 		}
+
 		sb.WriteString(fmt.Sprintf("  %s\n", display))
 	}
 

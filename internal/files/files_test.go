@@ -34,13 +34,14 @@ func TestSnapshotFileName(t *testing.T) {
 
 func TestSerializeDeserialize(t *testing.T) {
 	snap := &files.Snapshot{
+		Title:    "Example Title",
 		Name:     "TestExample",
 		FilePath: "/path/to/test.go",
 		Content:  "test content\nmultiline",
 	}
 
 	serialized := snap.Serialize()
-	expected := "---\ntest_name: TestExample\nfile_path: /path/to/test.go\nfunc_name: \n---\ntest content\nmultiline"
+	expected := "---\ntitle: Example Title\ntest_name: TestExample\nfile_path: /path/to/test.go\nfunc_name: \n---\ntest content\nmultiline"
 	if serialized != expected {
 		t.Errorf("Serialize():\nexpected:\n%s\n\ngot:\n%s", expected, serialized)
 	}
@@ -50,6 +51,9 @@ func TestSerializeDeserialize(t *testing.T) {
 		t.Fatalf("Deserialize failed: %v", err)
 	}
 
+	if deserialized.Title != snap.Title {
+		t.Errorf("Title mismatch: %s != %s", deserialized.Title, snap.Title)
+	}
 	if deserialized.Name != snap.Name {
 		t.Errorf("Name mismatch: %s != %s", deserialized.Name, snap.Name)
 	}
@@ -85,24 +89,35 @@ func TestDeserializeValidFormats(t *testing.T) {
 	tests := []struct {
 		name        string
 		input       string
+		wantTitle   string
 		wantTest    string
 		wantContent string
 	}{
 		{
 			"simple",
-			"---\ntest_name: Test\nfile_path: /path\nfunc_name: \n---\ncontent",
+			"---\ntitle: Simple Title\ntest_name: Test\nfile_path: /path\nfunc_name: \n---\ncontent",
+			"Simple Title",
 			"Test",
 			"content",
 		},
 		{
 			"multiline content",
-			"---\ntest_name: MyTest\nfile_path: /path\nfunc_name: \n---\nline1\nline2\nline3",
+			"---\ntitle: Multi Title\ntest_name: MyTest\nfile_path: /path\nfunc_name: \n---\nline1\nline2\nline3",
+			"Multi Title",
 			"MyTest",
 			"line1\nline2\nline3",
 		},
 		{
 			"with extra fields",
-			"---\ntest_name: Test\nfile_path: /path\nfunc_name: \nextra: ignored\n---\ncontent",
+			"---\ntitle: Extra Title\ntest_name: Test\nfile_path: /path\nfunc_name: \nextra: ignored\n---\ncontent",
+			"Extra Title",
+			"Test",
+			"content",
+		},
+		{
+			"backward compatibility - no title",
+			"---\ntest_name: Test\nfile_path: /path\nfunc_name: \n---\ncontent",
+			"",
 			"Test",
 			"content",
 		},
@@ -113,6 +128,9 @@ func TestDeserializeValidFormats(t *testing.T) {
 			snap, err := files.Deserialize(tt.input)
 			if err != nil {
 				t.Fatalf("Deserialize failed: %v", err)
+			}
+			if snap.Title != tt.wantTitle {
+				t.Errorf("Title = %s, want %s", snap.Title, tt.wantTitle)
 			}
 			if snap.Name != tt.wantTest {
 				t.Errorf("Name = %s, want %s", snap.Name, tt.wantTest)
@@ -126,6 +144,7 @@ func TestDeserializeValidFormats(t *testing.T) {
 
 func TestSaveAndReadSnapshot(t *testing.T) {
 	snap := &files.Snapshot{
+		Title:   "Save Read Title",
 		Name:    "TestSaveRead",
 		Content: "saved content",
 	}
@@ -155,6 +174,7 @@ func TestReadSnapshotNotFound(t *testing.T) {
 
 func TestAcceptSnapshot(t *testing.T) {
 	newSnap := &files.Snapshot{
+		Title:   "Accept Title",
 		Name:    "TestAccept",
 		Content: "new content to accept",
 	}
@@ -186,6 +206,7 @@ func TestAcceptSnapshot(t *testing.T) {
 
 func TestRejectSnapshot(t *testing.T) {
 	snap := &files.Snapshot{
+		Title:   "Reject Title",
 		Name:    "TestReject",
 		Content: "content to reject",
 	}

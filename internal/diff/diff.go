@@ -13,9 +13,10 @@ const (
 )
 
 type DiffLine struct {
-	Number int
-	Line   string
-	Kind   DiffKind
+	OldNumber int
+	NewNumber int
+	Line      string
+	Kind      DiffKind
 }
 
 func Histogram(old, new string) []DiffLine {
@@ -66,23 +67,24 @@ func traceback(old, new []string, matrix [][]int) []DiffLine {
 
 	for i > 0 || j > 0 {
 		if i > 0 && j > 0 && old[i-1] == new[j-1] {
-			result = append([]DiffLine{{Line: old[i-1], Kind: DiffShared}}, result...)
+			// Lines match - shared
+			result = append([]DiffLine{{Line: old[i-1], Kind: DiffShared, OldNumber: i, NewNumber: j}}, result...)
 			i--
 			j--
-		} else if j > 0 && (i == 0 || matrix[i][j-1] < matrix[i-1][j]) {
-			result = append([]DiffLine{{Line: new[j-1], Kind: DiffNew}}, result...)
+		} else if i > 0 && j > 0 && matrix[i-1][j] == matrix[i][j-1] {
+			// Equal cost - prefer showing deletions first, then additions
+			// This groups changes better
+			result = append([]DiffLine{{Line: old[i-1], Kind: DiffOld, OldNumber: i}}, result...)
+			i--
+		} else if j > 0 && (i == 0 || matrix[i][j-1] <= matrix[i-1][j]) {
+			// Addition
+			result = append([]DiffLine{{Line: new[j-1], Kind: DiffNew, NewNumber: j}}, result...)
 			j--
 		} else if i > 0 {
-			result = append([]DiffLine{{Line: old[i-1], Kind: DiffOld}}, result...)
+			// Deletion
+			result = append([]DiffLine{{Line: old[i-1], Kind: DiffOld, OldNumber: i}}, result...)
 			i--
-		} else {
-			result = append([]DiffLine{{Line: new[j-1], Kind: DiffNew}}, result...)
-			j--
 		}
-	}
-
-	for idx := range result {
-		result[idx].Number = idx + 1
 	}
 
 	return result

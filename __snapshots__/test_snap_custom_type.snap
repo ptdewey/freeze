@@ -1,6 +1,7 @@
 ---
+title: Custom Type Test
 test_name: TestSnapCustomType
-file_path: /home/patrick/projects/freeze/freeze.go
+file_path: /home/patrick/projects/scratchpad/freeze/freeze.go
 func_name: 
 ---
 freeze_test.CustomStruct{

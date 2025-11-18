@@ -11,11 +11,11 @@ import (
 )
 
 func TestSnapString(t *testing.T) {
-	freeze.SnapString(t, "hello world")
+	freeze.SnapString(t, "Simple String Test", "hello world")
 }
 
 func TestSnapMultiple(t *testing.T) {
-	freeze.Snap(t, "value1", "value2", 42, "foo", "bar", "baz", "wibble", "wobble", "tock", nil)
+	freeze.Snap(t, "Multiple Values Test", "value1", "value2", 42, "foo", "bar", "baz", "wibble", "wobble", "tock", nil)
 }
 
 type CustomStruct struct {
@@ -32,12 +32,14 @@ func TestSnapCustomType(t *testing.T) {
 		Name: "Alice",
 		Age:  30,
 	}
-	freeze.Snap(t, cs)
+	freeze.Snap(t, "Custom Type Test", cs)
 }
 
 func TestMap(t *testing.T) {
-	freeze.Snap(t, map[string]any{
-		"foo": "bar",
+	freeze.Snap(t, "Map Test", map[string]any{
+		"foo":      "bar",
+		"wibbling": "wobble",
+		"wibble":   "wobble",
 	})
 }
 
@@ -59,12 +61,13 @@ func calculateSomething(n int) int {
 
 func TestSerializeDeserialize(t *testing.T) {
 	snap := &freeze.Snapshot{
+		Title:   "My Test Title",
 		Name:    "TestExample",
 		Content: "test content\nmultiline",
 	}
 
 	serialized := snap.Serialize()
-	expected := "---\ntest_name: TestExample\nfile_path: \nfunc_name: \n---\ntest content\nmultiline"
+	expected := "---\ntitle: My Test Title\ntest_name: TestExample\nfile_path: \nfunc_name: \n---\ntest content\nmultiline"
 	if serialized != expected {
 		t.Errorf("expected:\n%s\ngot:\n%s", expected, serialized)
 	}
@@ -74,6 +77,9 @@ func TestSerializeDeserialize(t *testing.T) {
 		t.Fatalf("failed to deserialize: %v", err)
 	}
 
+	if deserialized.Title != snap.Title {
+		t.Errorf("title mismatch: %s != %s", deserialized.Title, snap.Title)
+	}
 	if deserialized.Name != snap.Name {
 		t.Errorf("test name mismatch: %s != %s", deserialized.Name, snap.Name)
 	}
@@ -84,6 +90,7 @@ func TestSerializeDeserialize(t *testing.T) {
 
 func TestFileOperations(t *testing.T) {
 	snap := &freeze.Snapshot{
+		Title:   "File Ops Title",
 		Name:    "TestFileOps",
 		Content: "file test content",
 	}
@@ -163,11 +170,13 @@ func TestHistogramDiff(t *testing.T) {
 
 func TestDiffSnapshotBox(t *testing.T) {
 	old := &freeze.Snapshot{
+		Title:   "Diff Test Title",
 		Name:    "TestDiff",
 		Content: "old content",
 	}
 
 	new := &freeze.Snapshot{
+		Title:   "Diff Test Title",
 		Name:    "TestDiff",
 		Content: "new content",
 	}
@@ -184,6 +193,7 @@ func TestDiffSnapshotBox(t *testing.T) {
 
 func TestNewSnapshotBox(t *testing.T) {
 	snap := &freeze.Snapshot{
+		Title:   "New Test Title",
 		Name:    "TestNew",
 		Content: "test content",
 	}

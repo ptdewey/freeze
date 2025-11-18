@@ -9,6 +9,7 @@ import (
 )
 
 type Snapshot struct {
+	Title    string
 	Name     string
 	FilePath string
 	FuncName string
@@ -16,7 +17,7 @@ type Snapshot struct {
 }
 
 func (s *Snapshot) Serialize() string {
-	header := fmt.Sprintf("---\ntest_name: %s\nfile_path: %s\nfunc_name: %s\n---\n", s.Name, s.FilePath, s.FuncName)
+	header := fmt.Sprintf("---\ntitle: %s\ntest_name: %s\nfile_path: %s\nfunc_name: %s\n---\n", s.Title, s.Name, s.FilePath, s.FuncName)
 	return header + s.Content
 }
 
@@ -46,6 +47,8 @@ func Deserialize(raw string) (*Snapshot, error) {
 
 		key, value := kv[0], kv[1]
 		switch key {
+		case "title":
+			snap.Title = value
 		case "test_name":
 			snap.Name = value
 		case "file_path":

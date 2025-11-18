@@ -1,8 +1,11 @@
 ---
+title: Map Test
 test_name: TestMap
-file_path: /home/patrick/projects/freeze/freeze.go
+file_path: /home/patrick/projects/scratchpad/freeze/freeze.go
 func_name: 
 ---
 map[string]interface{}{
+ "wibble": "wobble",
  "foo": "bar",
+ "wibbling": "wobble",
 }

@@ -16,21 +16,15 @@ func init() {
 	utter.Config.ElideType = true
 }
 
-func SnapString(t testingT, content string) {
+func SnapString(t testingT, title string, content string) {
 	t.Helper()
-	snap(t, content)
+	snap(t, title, content)
 }
 
-func Snap(t testingT, values ...any) {
+func Snap(t testingT, title string, values ...any) {
 	t.Helper()
 	content := formatValues(values...)
-	snap(t, content)
-}
-
-func SnapWithTitle(t testingT, title string, values ...any) {
-	t.Helper()
-	content := formatValues(values...)
-	snapWithTitle(t, title, content)
+	snap(t, title, content)
 }
 
 func SnapFunc(t testingT, values ...any) {
@@ -49,47 +43,30 @@ func SnapFunc(t testingT, values ...any) {
 		}
 		funcName = fullName[parts:]
 	}
+	testName := t.Name()
 	content := formatValues(values...)
-	snapWithTitle(t, funcName, content)
+	snapWithTitle(t, funcName, testName, content)
 }
 
-func getFunctionName() string {
-	pc, _, _, _ := runtime.Caller(2)
-	fn := runtime.FuncForPC(pc)
-	if fn == nil {
-		return "unknown"
-	}
-
-	fullName := fn.Name()
-	parts := len(fullName) - 1
-	for i := len(fullName) - 1; i >= 0; i-- {
-		if fullName[i] == '.' {
-			parts = i + 1
-			break
-		}
-	}
-
-	return fullName[parts:]
-}
-
-func snap(t testingT, content string) {
+func snap(t testingT, title string, content string) {
 	t.Helper()
 	testName := t.Name()
-	snapWithTitle(t, testName, content)
+	snapWithTitle(t, title, testName, content)
 }
 
-func snapWithTitle(t testingT, title string, content string) {
+func snapWithTitle(t testingT, title string, testName string, content string) {
 	t.Helper()
 
 	_, filePath, _, _ := runtime.Caller(2)
 
 	snapshot := &files.Snapshot{
-		Name:     title,
+		Title:    title,
+		Name:     testName,
 		FilePath: filePath,
 		Content:  content,
 	}
 
-	accepted, err := files.ReadAccepted(title)
+	accepted, err := files.ReadAccepted(testName)
 	if err == nil {
 		if accepted.Content == content {
 			return
@@ -119,9 +96,10 @@ func convertDiffLines(diffLines []diff.DiffLine) []pretty.DiffLine {
 	result := make([]pretty.DiffLine, len(diffLines))
 	for i, dl := range diffLines {
 		result[i] = pretty.DiffLine{
-			Number: dl.Number,
-			Line:   dl.Line,
-			Kind:   pretty.DiffKind(dl.Kind),
+			OldNumber: dl.OldNumber,
+			NewNumber: dl.NewNumber,
+			Line:      dl.Line,
+			Kind:      pretty.DiffKind(dl.Kind),
 		}
 	}
 	return result
