@@ -26,10 +26,9 @@ func NewSnapshotBox(snap *files.Snapshot) string {
 	width := TerminalWidth()
 
 	var sb strings.Builder
-	sb.WriteString(strings.Repeat("─", width+2) + "\n")
-	// TODO: "New Snapshot" should be above this line, in default color.
-	// - color should be on test name and path
-	sb.WriteString(fmt.Sprintf("  %s \n", Blue("New Snapshot -- \""+snap.Name+"\"")))
+	sb.WriteString("─── " + "New Snapshot " + strings.Repeat("─", width-15) + "\n\n")
+	sb.WriteString(fmt.Sprintf("  test: %s\n", Blue("\""+snap.Name+"\"")))
+	sb.WriteString(fmt.Sprintf("  snapshot: %s\n\n", Gray(files.SnapshotFileName(snap.Name))))
 
 	lines := strings.Split(snap.Content, "\n")
 	numLines := len(lines)
@@ -59,6 +58,8 @@ func NewSnapshotBox(snap *files.Snapshot) string {
 // TODO: needs to get overhauled with styling like above
 // - should show line numbers, line numbers with diffs should be the same
 // - should show test name and path in the header section
+// TODO: additional styling
+// show helper text to say + is new results, - is old snapshot
 func DiffSnapshotBox(old, new *files.Snapshot, diffLines []DiffLine) string {
 	width := TerminalWidth()
 
