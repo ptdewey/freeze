@@ -22,13 +22,24 @@ const (
 	DiffNew
 )
 
-func NewSnapshotBox(snap *files.Snapshot) string {
+func newSnapshotBoxInternal(snap *files.Snapshot, isFuncSnapshot bool) string {
 	width := TerminalWidth()
 
 	var sb strings.Builder
 	sb.WriteString("─── " + "New Snapshot " + strings.Repeat("─", width-15) + "\n\n")
-	sb.WriteString(fmt.Sprintf("  test: %s\n", Blue("\""+snap.Name+"\"")))
-	sb.WriteString(fmt.Sprintf("  snapshot: %s\n\n", Gray(files.SnapshotFileName(snap.Name))))
+
+	if isFuncSnapshot && snap.FuncName != "" {
+		sb.WriteString(fmt.Sprintf("  func: %s\n", Blue("\""+snap.FuncName+"\"")))
+		sb.WriteString(fmt.Sprintf("  test: %s\n", Blue("\""+snap.Name+"\"")))
+	} else {
+		sb.WriteString(fmt.Sprintf("  test: %s\n", Blue("\""+snap.Name+"\"")))
+	}
+
+	sb.WriteString(fmt.Sprintf("  snapshot: %s\n", Gray(files.SnapshotFileName(snap.Name)+".snap.new")))
+	if snap.FilePath != "" {
+		sb.WriteString(fmt.Sprintf("  file: %s\n", Gray(snap.FilePath)))
+	}
+	sb.WriteString("\n")
 
 	lines := strings.Split(snap.Content, "\n")
 	numLines := len(lines)
@@ -55,17 +66,24 @@ func NewSnapshotBox(snap *files.Snapshot) string {
 	return sb.String()
 }
 
-// TODO: needs to get overhauled with styling like above
-// - should show line numbers, line numbers with diffs should be the same
-// - should show test name and path in the header section
-// TODO: additional styling
-// show helper text to say + is new results, - is old snapshot
+func NewSnapshotBox(snap *files.Snapshot) string {
+	return newSnapshotBoxInternal(snap, false)
+}
+
+func NewSnapshotBoxFunc(snap *files.Snapshot) string {
+	return newSnapshotBoxInternal(snap, true)
+}
+
+// TODO: diff should show old and new line numbers
 func DiffSnapshotBox(old, new *files.Snapshot, diffLines []DiffLine) string {
 	width := TerminalWidth()
 
 	var sb strings.Builder
 	sb.WriteString(strings.Repeat("─", width) + "\n")
 	sb.WriteString(fmt.Sprintf("  %s\n", Blue("Snapshot Diff")))
+	if new.FilePath != "" {
+		sb.WriteString(fmt.Sprintf("  file: %s\n", Gray(new.FilePath)))
+	}
 	sb.WriteString(strings.Repeat("─", width) + "\n")
 
 	for _, dl := range diffLines {

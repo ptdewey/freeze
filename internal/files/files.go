@@ -9,13 +9,14 @@ import (
 )
 
 type Snapshot struct {
-	Version string
-	Name    string
-	Content string
+	Name     string
+	FilePath string
+	FuncName string
+	Content  string
 }
 
 func (s *Snapshot) Serialize() string {
-	header := fmt.Sprintf("---\nversion: %s\ntest_name: %s\n---\n", s.Version, s.Name)
+	header := fmt.Sprintf("---\ntest_name: %s\nfile_path: %s\nfunc_name: %s\n---\n", s.Name, s.FilePath, s.FuncName)
 	return header + s.Content
 }
 
@@ -32,7 +33,7 @@ func Deserialize(raw string) (*Snapshot, error) {
 		Content: content,
 	}
 
-	for _, line := range strings.Split(header, "\n") {
+	for line := range strings.SplitSeq(header, "\n") {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue
@@ -45,10 +46,12 @@ func Deserialize(raw string) (*Snapshot, error) {
 
 		key, value := kv[0], kv[1]
 		switch key {
-		case "version":
-			snap.Version = value
 		case "test_name":
 			snap.Name = value
+		case "file_path":
+			snap.FilePath = value
+		case "func_name":
+			snap.FuncName = value
 		}
 	}
 

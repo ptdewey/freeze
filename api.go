@@ -38,42 +38,10 @@ func NewSnapshotBox(snap *Snapshot) string {
 	return api.NewSnapshotBox(snap)
 }
 
+func NewSnapshotBoxFunc(snap *Snapshot) string {
+	return api.NewSnapshotBoxFunc(snap)
+}
+
 func DiffSnapshotBox(old, new *Snapshot) string {
 	return api.DiffSnapshotBox(old, new)
-}
-
-func Red(s string) string {
-	return api.Red(s)
-}
-
-func Green(s string) string {
-	return api.Green(s)
-}
-
-func Yellow(s string) string {
-	return api.Yellow(s)
-}
-
-func Blue(s string) string {
-	return api.Blue(s)
-}
-
-func Gray(s string) string {
-	return api.Gray(s)
-}
-
-func Bold(s string) string {
-	return api.Bold(s)
-}
-
-func TerminalWidth() int {
-	return api.TerminalWidth()
-}
-
-func ClearScreen() {
-	api.ClearScreen()
-}
-
-func ClearLine() {
-	api.ClearLine()
 }

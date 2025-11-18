@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/ptdewey/freeze"
+	"github.com/ptdewey/freeze/internal/api"
 )
 
 func TestSnapString(t *testing.T) {
@@ -40,15 +41,30 @@ func TestMap(t *testing.T) {
 	})
 }
 
+func testHelperFunction() string {
+	return "helper result"
+}
+
+func TestSnapFunc(t *testing.T) {
+	freeze.SnapFuncWithName(t, "testHelperFunction", testHelperFunction())
+}
+
+func TestSnapFuncAnotherHelper(t *testing.T) {
+	freeze.SnapFuncWithName(t, "calculateSomething", calculateSomething(5))
+}
+
+func calculateSomething(n int) int {
+	return n * 2
+}
+
 func TestSerializeDeserialize(t *testing.T) {
 	snap := &freeze.Snapshot{
-		Version: "1.0.0",
 		Name:    "TestExample",
 		Content: "test content\nmultiline",
 	}
 
 	serialized := snap.Serialize()
-	expected := "---\nversion: 1.0.0\ntest_name: TestExample\n---\ntest content\nmultiline"
+	expected := "---\ntest_name: TestExample\nfile_path: \nfunc_name: \n---\ntest content\nmultiline"
 	if serialized != expected {
 		t.Errorf("expected:\n%s\ngot:\n%s", expected, serialized)
 	}
@@ -58,9 +74,6 @@ func TestSerializeDeserialize(t *testing.T) {
 		t.Fatalf("failed to deserialize: %v", err)
 	}
 
-	if deserialized.Version != snap.Version {
-		t.Errorf("version mismatch: %s != %s", deserialized.Version, snap.Version)
-	}
 	if deserialized.Name != snap.Name {
 		t.Errorf("test name mismatch: %s != %s", deserialized.Name, snap.Name)
 	}
@@ -71,12 +84,11 @@ func TestSerializeDeserialize(t *testing.T) {
 
 func TestFileOperations(t *testing.T) {
 	snap := &freeze.Snapshot{
-		Version: "0.1.0",
 		Name:    "TestFileOps",
 		Content: "file test content",
 	}
 
-	if err := freeze.SaveSnapshot(snap, "test"); err != nil {
+	if err := api.SaveSnapshot(snap, "test"); err != nil {
 		t.Fatalf("failed to save snapshot: %v", err)
 	}
 
@@ -151,13 +163,11 @@ func TestHistogramDiff(t *testing.T) {
 
 func TestDiffSnapshotBox(t *testing.T) {
 	old := &freeze.Snapshot{
-		Version: "0.1.0",
 		Name:    "TestDiff",
 		Content: "old content",
 	}
 
 	new := &freeze.Snapshot{
-		Version: "0.1.0",
 		Name:    "TestDiff",
 		Content: "new content",
 	}
@@ -174,7 +184,6 @@ func TestDiffSnapshotBox(t *testing.T) {
 
 func TestNewSnapshotBox(t *testing.T) {
 	snap := &freeze.Snapshot{
-		Version: "0.1.0",
 		Name:    "TestNew",
 		Content: "test content",
 	}
@@ -186,26 +195,6 @@ func TestNewSnapshotBox(t *testing.T) {
 
 	if !contains(box, "New Snapshot") {
 		t.Error("NewSnapshotBox missing header")
-	}
-}
-
-func TestFormatFunctions(t *testing.T) {
-	tests := []struct {
-		name string
-		fn   func(string) string
-		text string
-	}{
-		{"Red", freeze.Red, "error"},
-		{"Green", freeze.Green, "success"},
-		{"Yellow", freeze.Yellow, "warning"},
-		{"Blue", freeze.Blue, "info"},
-	}
-
-	for _, tt := range tests {
-		result := tt.fn(tt.text)
-		if result == "" {
-			t.Errorf("%s returned empty string", tt.name)
-		}
 	}
 }
 

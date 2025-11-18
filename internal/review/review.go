@@ -75,7 +75,11 @@ func reviewLoop(snapshots []string) error {
 			diffLines := computeDiffLines(accepted, newSnap)
 			fmt.Println(pretty.DiffSnapshotBox(accepted, newSnap, diffLines))
 		} else {
-			fmt.Println(pretty.NewSnapshotBox(newSnap))
+			if newSnap.FuncName != "" {
+				fmt.Println(pretty.NewSnapshotBoxFunc(newSnap))
+			} else {
+				fmt.Println(pretty.NewSnapshotBox(newSnap))
+			}
 		}
 
 		for {

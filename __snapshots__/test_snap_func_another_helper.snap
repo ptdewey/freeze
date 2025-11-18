@@ -1,0 +1,6 @@
+---
+test_name: TestSnapFuncAnotherHelper
+file_path: /home/patrick/projects/freeze/freeze_test.go
+func_name: calculateSomething
+---
+10

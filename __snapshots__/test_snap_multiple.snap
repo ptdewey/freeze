@@ -1,6 +1,7 @@
 ---
-version: 0.1.0
 test_name: TestSnapMultiple
+file_path: /home/patrick/projects/freeze/freeze.go
+func_name: 
 ---
 "value1"
 "value2"

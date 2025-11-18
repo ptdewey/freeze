@@ -40,6 +40,10 @@ func NewSnapshotBox(snap *Snapshot) string {
 	return pretty.NewSnapshotBox(snap)
 }
 
+func NewSnapshotBoxFunc(snap *Snapshot) string {
+	return pretty.NewSnapshotBoxFunc(snap)
+}
+
 func DiffSnapshotBox(old, new *Snapshot) string {
 	diffLines := convertDiffLines(diff.Histogram(old.Content, new.Content))
 	return pretty.DiffSnapshotBox(old, new, diffLines)

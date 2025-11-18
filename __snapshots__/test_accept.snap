@@ -1,5 +1,6 @@
 ---
-version: 0.1.0
 test_name: TestAccept
+file_path: 
+func_name: 
 ---
 new content to accept
