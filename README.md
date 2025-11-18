@@ -2,15 +2,33 @@
 
 A [birdie](https://github.com/giacomocavalieri/birdie) and [insta](https://github.com/mitsuhiko/insta) inspired snapshot testing library for Go.
 
-TODO: screenshot
+![New snapshot screen](./assets/screenshot-new.png)
 
 ## Installation
 
-TODO:
+```sh
+go get github.com/ptdewey/freeze
+```
 
 ## Usage
 
-TODO:
+```go
+package yourpackage_test
+
+func TestSomething(t *testing.T) {
+    result := SomeFunction("foo")
+    freeze.Snap(t, result)
+
+    // To capture the calling function name use SnapFunc
+    freeze.SnapFunc(t, SomeFunction("bar"))
+}
+```
+
+To review a set of snapshots, run:
+
+```sh
+go run github.com/ptdewey/freeze/cmd/freeze review
+```
 
 ## Disclaimer
 

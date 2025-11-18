@@ -1,6 +1,6 @@
 ---
 test_name: TestSnapFunc
 file_path: /home/patrick/projects/freeze/freeze_test.go
-func_name: testHelperFunction
+func_name: 
 ---
 "helper result"

@@ -46,11 +46,11 @@ func testHelperFunction() string {
 }
 
 func TestSnapFunc(t *testing.T) {
-	freeze.SnapFuncWithName(t, "testHelperFunction", testHelperFunction())
+	freeze.SnapFunc(t, testHelperFunction())
 }
 
 func TestSnapFuncAnotherHelper(t *testing.T) {
-	freeze.SnapFuncWithName(t, "calculateSomething", calculateSomething(5))
+	freeze.SnapFunc(t, calculateSomething(5))
 }
 
 func calculateSomething(n int) int {

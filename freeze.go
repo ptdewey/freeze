@@ -35,14 +35,41 @@ func SnapWithTitle(t testingT, title string, values ...any) {
 
 func SnapFunc(t testingT, values ...any) {
 	t.Helper()
+	pc, _, _, _ := runtime.Caller(1)
+	fn := runtime.FuncForPC(pc)
+	funcName := "unknown"
+	if fn != nil {
+		fullName := fn.Name()
+		parts := len(fullName) - 1
+		for i := len(fullName) - 1; i >= 0; i-- {
+			if fullName[i] == '.' {
+				parts = i + 1
+				break
+			}
+		}
+		funcName = fullName[parts:]
+	}
 	content := formatValues(values...)
-	snapWithTitle(t, t.Name(), content, t.Name())
+	snapWithTitle(t, funcName, content)
 }
 
-func SnapFuncWithName(t testingT, funcName string, values ...any) {
-	t.Helper()
-	content := formatValues(values...)
-	snapWithTitle(t, t.Name(), content, funcName)
+func getFunctionName() string {
+	pc, _, _, _ := runtime.Caller(2)
+	fn := runtime.FuncForPC(pc)
+	if fn == nil {
+		return "unknown"
+	}
+
+	fullName := fn.Name()
+	parts := len(fullName) - 1
+	for i := len(fullName) - 1; i >= 0; i-- {
+		if fullName[i] == '.' {
+			parts = i + 1
+			break
+		}
+	}
+
+	return fullName[parts:]
 }
 
 func snap(t testingT, content string) {
@@ -51,7 +78,7 @@ func snap(t testingT, content string) {
 	snapWithTitle(t, testName, content)
 }
 
-func snapWithTitle(t testingT, title string, content string, funcName ...string) {
+func snapWithTitle(t testingT, title string, content string) {
 	t.Helper()
 
 	_, filePath, _, _ := runtime.Caller(2)
@@ -60,10 +87,6 @@ func snapWithTitle(t testingT, title string, content string, funcName ...string)
 		Name:     title,
 		FilePath: filePath,
 		Content:  content,
-	}
-
-	if len(funcName) > 0 && funcName[0] != "" {
-		snapshot.FuncName = funcName[0]
 	}
 
 	accepted, err := files.ReadAccepted(title)
@@ -88,11 +111,7 @@ func snapWithTitle(t testingT, title string, content string, funcName ...string)
 		return
 	}
 
-	if len(funcName) > 0 && funcName[0] != "" {
-		fmt.Println(pretty.NewSnapshotBoxFunc(snapshot))
-	} else {
-		fmt.Println(pretty.NewSnapshotBox(snapshot))
-	}
+	fmt.Println(pretty.NewSnapshotBox(snapshot))
 	t.Error("new snapshot created - run 'freeze review' to accept")
 }
 
