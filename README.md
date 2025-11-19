@@ -2,7 +2,9 @@
 
 A [birdie](https://github.com/giacomocavalieri/birdie) and [insta](https://github.com/mitsuhiko/insta) inspired snapshot testing library for Go.
 
-![New snapshot screen](./assets/screenshot-new.png)
+![New snapshot screen](./assets/screenshot-new.png "New snapshot view")
+
+![Snapshot review CLI](./assets/screenshots-diff-cli "Snapshot diff view (CLI)")
 
 ## Installation
 
@@ -30,6 +32,14 @@ To review a set of snapshots, run:
 go run github.com/ptdewey/freeze/cmd/freeze review
 ```
 
+<!-- TODO: add example of `freeze.Review()` in go code -->
+
+Freeze also includes (in a separate Go module) with a [Bubbletea](https://github.com/charmbracelet/bubbletea) TUI in [cmd/tui/main.go](./cmd/tui/main.go). (The TUI is shipped in a separate module to make the added dependencies optional)
+
+```sh
+# TODO: tui usage
+```
+
 ## Disclaimer
 
 - This package was largely vibe coded, your mileage may vary (but this library provides more of what I want than the ones below).
@@ -37,4 +47,5 @@ go run github.com/ptdewey/freeze/cmd/freeze review
 ## Other Libraries
 
 - [go-snaps](https://github.com/gkampitakis/go-snaps)
+  - Freeze uses the diff implementation from `go-snaps`.
 - [cupaloy](https://github.com/bradleyjkemp/cupaloy)

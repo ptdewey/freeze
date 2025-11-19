@@ -10,3 +10,10 @@ run:
 
 clean:
     @rm -rf ./__snapshots__
+
+tui:
+    @pushd ./cmd/tui && go build -o freeze-tui ./main.go && popd
+    @./cmd/tui/freeze-tui
+
+review:
+    @./cmd/tui/freeze-tui

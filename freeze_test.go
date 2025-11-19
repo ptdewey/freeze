@@ -37,9 +37,8 @@ func TestSnapCustomType(t *testing.T) {
 
 func TestMap(t *testing.T) {
 	freeze.Snap(t, "Map Test", map[string]any{
-		"foo":      "bar",
-		"wibbling": "wobble",
-		"wibble":   "wobble",
+		"foo":    "bar",
+		"wibble": "wobble",
 	})
 }
 
@@ -131,10 +130,10 @@ func TestSnapshotFileName(t *testing.T) {
 }
 
 func TestHistogramDiff(t *testing.T) {
-	old := "line1\nline2\nline3"
-	new := "line1\nmodified\nline3"
+	oldStr := "line1\nline2\nline3"
+	newStr := "line1\nmodified\nline3"
 
-	diff := freeze.Histogram(old, new)
+	diff := freeze.Histogram(oldStr, newStr)
 
 	if len(diff) < 3 {
 		t.Errorf("expected at least 3 diff lines, got %d", len(diff))
