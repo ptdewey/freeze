@@ -29,8 +29,8 @@ version: 0.1.0
    "c",
   },
   Tags: map[string]string{
-   "type": "test",
    "env": "dev",
+   "type": "test",
   },
   OptionalID: &int(42),
   Count: 3,

@@ -1,6 +1,7 @@
 package freeze
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/kortschak/utter"
@@ -15,10 +16,28 @@ const version = "0.1.0"
 // TODO: probably make this (and other things) configurable
 func init() {
 	utter.Config.ElideType = true
+	utter.Config.SortKeys = true
 }
 
 func SnapString(t testingT, title string, content string) {
 	t.Helper()
+	snap(t, title, content)
+}
+
+// SnapJSON takes a JSON string, unmarshals it, and then marshals it back with
+// pretty-printing before snapshotting. This ensures consistent formatting and
+// validates the JSON structure.
+func SnapJSON(t testingT, title string, jsonStr string) {
+	t.Helper()
+
+	var data interface{}
+	if err := json.Unmarshal([]byte(jsonStr), &data); err != nil {
+		t.Error("failed to unmarshal JSON:", err)
+		return
+	}
+
+	// Format the JSON data using the same mechanism as Snap
+	content := formatValue(data)
 	snap(t, title, content)
 }
 

@@ -44,12 +44,12 @@ map[string]interface{}{
    "name": "Item 1",
   },
   map[string]interface{}{
-   "name": "Item 2",
    "id": 2.0,
+   "name": "Item 2",
   },
   map[string]interface{}{
-   "name": "Item 3",
    "id": 3.0,
+   "name": "Item 3",
   },
  },
 }

@@ -1,0 +1,16 @@
+---
+title: SnapJSON With Special Characters
+test_name: TestSnapJSONWithSpecialCharacters
+file_path: 
+func_name: 
+version: 0.1.0
+---
+map[string]interface{}{
+ "escaped": "line1\nline2\ttab\rcarriage",
+ "html": "<div class=\"container\">Content</div>",
+ "paths": "C:\\Users\\name\\Documents\\file.txt",
+ "quotes": "He said \"hello\" and she said 'goodbye'",
+ "regex": "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$",
+ "special": "!@#$%^&*()_+-=[]{}|;:',.<>?/",
+ "unicode": "Hello 世界 🌍 مرحبا Привет",
+}

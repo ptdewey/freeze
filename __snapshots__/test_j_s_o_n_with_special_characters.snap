@@ -6,12 +6,12 @@ func_name:
 version: 0.1.0
 ---
 map[string]interface{}{
- "tabs": "col1\tcol2\tcol3",
  "backslash": "path\\to\\file",
- "english": "Hello, World!",
- "unicode": "こんにちは 世界 🌍",
  "emoji": "😀 😃 😄 😁 😆",
- "special_chars": "!@#$%^&*()_+-=[]{}|;:,.<>?",
+ "english": "Hello, World!",
  "escaped": "quotes: \"double\" and 'single'",
  "newlines": "line1\nline2\rline3\r\nline4",
+ "special_chars": "!@#$%^&*()_+-=[]{}|;:,.<>?",
+ "tabs": "col1\tcol2\tcol3",
+ "unicode": "こんにちは 世界 🌍",
 }

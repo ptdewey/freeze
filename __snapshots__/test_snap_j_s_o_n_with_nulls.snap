@@ -1,0 +1,19 @@
+---
+title: SnapJSON With Nulls
+test_name: TestSnapJSONWithNulls
+file_path: 
+func_name: 
+version: 0.1.0
+---
+map[string]interface{}{
+ "category": nil,
+ "description": nil,
+ "id": 1.0,
+ "metadata": map[string]interface{}{
+  "created": "2023-01-01",
+  "deleted": nil,
+  "updated": nil,
+ },
+ "name": "Item",
+ "tags": nil,
+}

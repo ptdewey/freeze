@@ -21,8 +21,8 @@ version: 0.1.0
    "moderator",
   },
   Metadata: map[string]interface{}{
-   "verified": true,
    "badge": "verified",
+   "verified": true,
   },
  },
  {
@@ -39,8 +39,8 @@ version: 0.1.0
    "user",
   },
   Metadata: map[string]interface{}{
-   "verified": false,
    "avatar": "https://example.com/bob.jpg",
+   "verified": false,
   },
  },
  {
@@ -58,8 +58,8 @@ version: 0.1.0
    "admin",
   },
   Metadata: map[string]interface{}{
-   "verified": true,
    "account_age_days": 365,
+   "verified": true,
   },
  },
 }

@@ -1,0 +1,23 @@
+---
+title: SnapJSON Empty Structures
+test_name: TestSnapJSONEmptyStructures
+file_path: 
+func_name: 
+version: 0.1.0
+---
+map[string]interface{}{
+ "empty_array": []interface{}{
+ },
+ "empty_object": map[string]interface{}{
+ },
+ "empty_string": "",
+ "false_value": false,
+ "nested": map[string]interface{}{
+  "also_empty": map[string]interface{}{
+  },
+  "empty": []interface{}{
+  },
+ },
+ "null_value": nil,
+ "zero": 0.0,
+}

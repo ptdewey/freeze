@@ -1,0 +1,42 @@
+---
+title: SnapJSON Mixed Types
+test_name: TestSnapJSONMixedTypes
+file_path: 
+func_name: 
+version: 0.1.0
+---
+map[string]interface{}{
+ "complex": []interface{}{
+  map[string]interface{}{
+   "id": 1.0,
+   "type": "user",
+  },
+  map[string]interface{}{
+   "id": 100.0,
+   "type": "post",
+  },
+  []interface{}{
+   1.0,
+   2.0,
+   3.0,
+  },
+  "string",
+  nil,
+ },
+ "mixed_array": []interface{}{
+  "string",
+  123.0,
+  45.67,
+  true,
+  false,
+  nil,
+  map[string]interface{}{
+   "nested": "object",
+  },
+  []interface{}{
+   1.0,
+   2.0,
+   3.0,
+  },
+ },
+}

@@ -6,19 +6,19 @@ func_name:
 version: 0.1.0
 ---
 map[string]interface{}{
- "name": "Jane Smith",
- "email": "jane@example.com",
- "phone": "+1-555-0123",
+ "active": true,
  "address": map[string]interface{}{
-  "street": "456 Oak Ave",
   "city": "San Francisco",
+  "street": "456 Oak Ave",
   "zip": "94102",
  },
+ "created_at": "2023-06-15T14:30:00Z",
+ "email": "jane@example.com",
+ "name": "Jane Smith",
+ "phone": "+1-555-0123",
  "tags": []interface{}{
   "vip",
   "verified",
   "premium",
  },
- "active": true,
- "created_at": "2023-06-15T14:30:00Z",
 }

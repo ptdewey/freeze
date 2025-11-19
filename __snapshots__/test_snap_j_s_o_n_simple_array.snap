@@ -1,0 +1,13 @@
+---
+title: SnapJSON Simple Array
+test_name: TestSnapJSONSimpleArray
+file_path: 
+func_name: 
+version: 0.1.0
+---
+[]interface{}{
+ "apple",
+ "banana",
+ "orange",
+ "grape",
+}

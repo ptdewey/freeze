@@ -26,12 +26,12 @@ freeze_test.Post{
   },
   Metadata: map[string]interface{}{
    "language": "en",
+   "notifications": true,
    "preferences": map[string]interface{}{
     "email_frequency": "weekly",
     "notifications": true,
    },
    "theme": "dark",
-   "notifications": true,
   },
  },
  Tags: []string{

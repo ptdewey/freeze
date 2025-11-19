@@ -942,6 +942,373 @@ func TestJSONWithMixedArrays(t *testing.T) {
 }
 
 // ============================================================================
+// SNAPJSON FUNCTION TESTS - Serialized JSON Strings
+// ============================================================================
+
+// TestSnapJSONBasic tests the SnapJSON function with basic JSON
+func TestSnapJSONBasic(t *testing.T) {
+	jsonStr := `{
+		"name": "John Doe",
+		"email": "john@example.com",
+		"age": 30,
+		"verified": true
+	}`
+
+	freeze.SnapJSON(t, "SnapJSON Basic Object", jsonStr)
+}
+
+// TestSnapJSONSimpleArray tests SnapJSON with simple arrays
+func TestSnapJSONSimpleArray(t *testing.T) {
+	jsonStr := `[
+		"apple",
+		"banana",
+		"orange",
+		"grape"
+	]`
+
+	freeze.SnapJSON(t, "SnapJSON Simple Array", jsonStr)
+}
+
+// TestSnapJSONCompactFormat tests SnapJSON with compact (minified) JSON
+func TestSnapJSONCompactFormat(t *testing.T) {
+	jsonStr := `{"id":1,"name":"Product","price":99.99,"in_stock":true,"tags":["electronics","gadgets"]}`
+
+	freeze.SnapJSON(t, "SnapJSON Compact Format", jsonStr)
+}
+
+// TestSnapJSONWithNestedObjects tests SnapJSON with nested JSON structures
+func TestSnapJSONWithNestedObjects(t *testing.T) {
+	jsonStr := `{
+		"user": {
+			"id": 42,
+			"profile": {
+				"username": "jane_smith",
+				"avatar": "https://example.com/avatar.jpg",
+				"settings": {
+					"theme": "dark",
+					"notifications": true,
+					"language": "en"
+				}
+			},
+			"permissions": ["read", "write", "admin"]
+		},
+		"created_at": "2023-06-15T10:30:00Z"
+	}`
+
+	freeze.SnapJSON(t, "SnapJSON Nested Objects", jsonStr)
+}
+
+// TestSnapJSONComplexAPI tests SnapJSON with complex API response
+func TestSnapJSONComplexAPI(t *testing.T) {
+	jsonStr := `{
+		"status": "success",
+		"code": 200,
+		"data": {
+			"users": [
+				{
+					"id": 1,
+					"name": "Alice",
+					"role": "admin",
+					"department": "Engineering",
+					"active": true
+				},
+				{
+					"id": 2,
+					"name": "Bob",
+					"role": "user",
+					"department": "Sales",
+					"active": true
+				},
+				{
+					"id": 3,
+					"name": "Charlie",
+					"role": "user",
+					"department": "Marketing",
+					"active": false
+				}
+			],
+			"pagination": {
+				"page": 1,
+				"per_page": 10,
+				"total": 3,
+				"total_pages": 1
+			}
+		},
+		"timestamp": "2023-11-18T21:45:30Z"
+	}`
+
+	freeze.SnapJSON(t, "SnapJSON Complex API Response", jsonStr)
+}
+
+// TestSnapJSONWithNulls tests SnapJSON handling of null values
+func TestSnapJSONWithNulls(t *testing.T) {
+	jsonStr := `{
+		"id": 1,
+		"name": "Item",
+		"description": null,
+		"category": null,
+		"tags": null,
+		"metadata": {
+			"created": "2023-01-01",
+			"updated": null,
+			"deleted": null
+		}
+	}`
+
+	freeze.SnapJSON(t, "SnapJSON With Nulls", jsonStr)
+}
+
+// TestSnapJSONArrayOfObjects tests SnapJSON with arrays of objects
+func TestSnapJSONArrayOfObjects(t *testing.T) {
+	jsonStr := `[
+		{
+			"id": 1,
+			"type": "post",
+			"title": "First Post",
+			"views": 150,
+			"likes": 42
+		},
+		{
+			"id": 2,
+			"type": "post",
+			"title": "Second Post",
+			"views": 280,
+			"likes": 75
+		},
+		{
+			"id": 3,
+			"type": "post",
+			"title": "Third Post",
+			"views": 450,
+			"likes": 120
+		}
+	]`
+
+	freeze.SnapJSON(t, "SnapJSON Array of Objects", jsonStr)
+}
+
+// TestSnapJSONLargeNestedStructure tests SnapJSON with deeply nested JSON
+func TestSnapJSONLargeNestedStructure(t *testing.T) {
+	jsonStr := `{
+		"organization": {
+			"name": "TechCorp",
+			"id": "org_123",
+			"departments": [
+				{
+					"name": "Engineering",
+					"manager": "Alice",
+					"teams": [
+						{
+							"name": "Backend",
+							"lead": "John",
+							"members": [
+								{"id": 1, "name": "John", "level": "senior"},
+								{"id": 2, "name": "Jane", "level": "mid"}
+							],
+							"projects": [
+								{"id": "proj_1", "name": "API Service", "status": "active"},
+								{"id": "proj_2", "name": "Database Optimization", "status": "planning"}
+							]
+						},
+						{
+							"name": "Frontend",
+							"lead": "Bob",
+							"members": [
+								{"id": 3, "name": "Bob", "level": "senior"},
+								{"id": 4, "name": "Carol", "level": "junior"}
+							],
+							"projects": [
+								{"id": "proj_3", "name": "Web App", "status": "active"}
+							]
+						}
+					]
+				},
+				{
+					"name": "Sales",
+					"manager": "Charlie",
+					"teams": [
+						{
+							"name": "Enterprise",
+							"lead": "Dave",
+							"members": [
+								{"id": 5, "name": "Dave", "level": "senior"},
+								{"id": 6, "name": "Eve", "level": "mid"}
+							],
+							"projects": []
+						}
+					]
+				}
+			],
+			"metadata": {
+				"founded": "2020",
+				"employees": 150,
+				"locations": ["USA", "EU", "APAC"]
+			}
+		}
+	}`
+
+	freeze.SnapJSON(t, "SnapJSON Large Nested Structure", jsonStr)
+}
+
+// TestSnapJSONWithNumbers tests SnapJSON with various number formats
+func TestSnapJSONWithNumbers(t *testing.T) {
+	jsonStr := `{
+		"integers": [0, 1, -1, 42, -100, 9999999],
+		"floats": [0.0, 3.14, -2.5, 0.001, 1.23e-4, 5.67e10],
+		"financial": {
+			"revenue": 1000000.50,
+			"expenses": 750000.75,
+			"profit_margin": 0.2499
+		},
+		"measurements": {
+			"temperature": -40.5,
+			"distance": 1000.25,
+			"weight": 0.5
+		}
+	}`
+
+	freeze.SnapJSON(t, "SnapJSON With Numbers", jsonStr)
+}
+
+// TestSnapJSONWithSpecialCharacters tests SnapJSON with special chars
+func TestSnapJSONWithSpecialCharacters(t *testing.T) {
+	jsonStr := `{
+		"special": "!@#$%^&*()_+-=[]{}|;:',.<>?/",
+		"escaped": "line1\nline2\ttab\rcarriage",
+		"quotes": "He said \"hello\" and she said 'goodbye'",
+		"unicode": "Hello 世界 🌍 مرحبا Привет",
+		"paths": "C:\\Users\\name\\Documents\\file.txt",
+		"html": "<div class=\"container\">Content</div>",
+		"regex": "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"
+	}`
+
+	freeze.SnapJSON(t, "SnapJSON With Special Characters", jsonStr)
+}
+
+// TestSnapJSONEmptyStructures tests SnapJSON with empty collections
+func TestSnapJSONEmptyStructures(t *testing.T) {
+	jsonStr := `{
+		"empty_array": [],
+		"empty_object": {},
+		"empty_string": "",
+		"zero": 0,
+		"false_value": false,
+		"null_value": null,
+		"nested": {
+			"empty": [],
+			"also_empty": {}
+		}
+	}`
+
+	freeze.SnapJSON(t, "SnapJSON Empty Structures", jsonStr)
+}
+
+// TestSnapJSONMixedTypes tests SnapJSON with mixed array types
+func TestSnapJSONMixedTypes(t *testing.T) {
+	jsonStr := `{
+		"mixed_array": [
+			"string",
+			123,
+			45.67,
+			true,
+			false,
+			null,
+			{"nested": "object"},
+			[1, 2, 3]
+		],
+		"complex": [
+			{"type": "user", "id": 1},
+			{"type": "post", "id": 100},
+			[1, 2, 3],
+			"string",
+			null
+		]
+	}`
+
+	freeze.SnapJSON(t, "SnapJSON Mixed Types", jsonStr)
+}
+
+// TestSnapJSONRealWorldExample tests SnapJSON with real-world API data
+func TestSnapJSONRealWorldExample(t *testing.T) {
+	jsonStr := `{
+		"success": true,
+		"data": {
+			"product": {
+				"id": "prod_12345",
+				"name": "Premium Wireless Headphones",
+				"sku": "PWH-001",
+				"description": "High-quality wireless headphones with noise cancellation",
+				"price": {
+					"amount": 199.99,
+					"currency": "USD",
+					"discount": 10,
+					"final_price": 179.99
+				},
+				"inventory": {
+					"total": 500,
+					"available": 425,
+					"reserved": 50,
+					"damaged": 25
+				},
+				"specifications": {
+					"battery_life": "30 hours",
+					"weight": "250g",
+					"colors": ["black", "white", "blue"],
+					"warranty_months": 24
+				},
+				"ratings": {
+					"average": 4.5,
+					"count": 1250,
+					"breakdown": {
+						"5": 750,
+						"4": 350,
+						"3": 100,
+						"2": 30,
+						"1": 20
+					}
+				},
+				"reviews": [
+					{
+						"id": "rev_001",
+						"user": "john_doe",
+						"rating": 5,
+						"title": "Excellent product!",
+						"content": "Great sound quality and comfortable to wear.",
+						"helpful": 25,
+						"created_at": "2023-11-15T10:30:00Z"
+					},
+					{
+						"id": "rev_002",
+						"user": "jane_smith",
+						"rating": 4,
+						"title": "Good but pricey",
+						"content": "Works well, could be cheaper.",
+						"helpful": 12,
+						"created_at": "2023-11-10T14:20:00Z"
+					}
+				]
+			},
+			"related_products": [
+				{
+					"id": "prod_12346",
+					"name": "Headphone Case",
+					"price": 29.99
+				},
+				{
+					"id": "prod_12347",
+					"name": "Audio Cable",
+					"price": 14.99
+				}
+			]
+		},
+		"request_id": "req_abc123def456",
+		"timestamp": "2023-11-18T22:00:00Z"
+	}`
+
+	freeze.SnapJSON(t, "SnapJSON Real World Example", jsonStr)
+}
+
+// ============================================================================
 // HELPER FUNCTIONS
 // ============================================================================
 
