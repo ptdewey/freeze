@@ -1,6 +1,6 @@
 ---
 title: Go Struct Marshalled to JSON
-test_name: TestGoStructMarshalledToJSON
+test_name: TestGoStructMarshalledToJson
 file_path: 
 func_name: 
 version: 0.1.0

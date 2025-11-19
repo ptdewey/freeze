@@ -271,11 +271,7 @@ func (m *model) updateViewportContent() {
 		b.WriteString(pretty.DiffSnapshotBox(m.accepted, m.newSnap, m.diffLines))
 	} else {
 		if m.newSnap != nil {
-			if m.newSnap.FuncName != "" {
-				b.WriteString(pretty.NewSnapshotBoxFunc(m.newSnap))
-			} else {
-				b.WriteString(pretty.NewSnapshotBox(m.newSnap))
-			}
+			b.WriteString(pretty.NewSnapshotBox(m.newSnap))
 		}
 	}
 

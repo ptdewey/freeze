@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/ptdewey/freeze"
-	"github.com/ptdewey/freeze/internal/api"
+	"github.com/ptdewey/freeze/internal/files"
 )
 
 func TestSnapString(t *testing.T) {
@@ -80,7 +80,7 @@ func TestFileOperations(t *testing.T) {
 		Content: "file test content",
 	}
 
-	if err := api.SaveSnapshot(snap, "test"); err != nil {
+	if err := files.SaveSnapshot(snap, "test"); err != nil {
 		t.Fatalf("failed to save snapshot: %v", err)
 	}
 
@@ -534,7 +534,7 @@ func TestStructureWithEmptyValues(t *testing.T) {
 // ============================================================================
 
 // TestJSONObject tests snapshot with JSON objects
-func TestJSONObject(t *testing.T) {
+func TestJsonObject(t *testing.T) {
 	jsonStr := `{
 		"user": {
 			"id": 1,
@@ -562,7 +562,7 @@ func TestJSONObject(t *testing.T) {
 }
 
 // TestComplexJSONStructure tests complex nested JSON structures
-func TestComplexJSONStructure(t *testing.T) {
+func TestComplexJsonStructure(t *testing.T) {
 	jsonStr := `{
 		"api": {
 			"version": "2.0",
@@ -631,7 +631,7 @@ func TestComplexJSONStructure(t *testing.T) {
 }
 
 // TestJSONArrayOfObjects tests JSON arrays with multiple object types
-func TestJSONArrayOfObjects(t *testing.T) {
+func TestJsonArrayOfObjects(t *testing.T) {
 	jsonStr := `[
 		{
 			"type": "user",
@@ -670,7 +670,7 @@ func TestJSONArrayOfObjects(t *testing.T) {
 }
 
 // TestJSONWithVariousTypes tests JSON with various data types
-func TestJSONWithVariousTypes(t *testing.T) {
+func TestJsonWithVariousTypes(t *testing.T) {
 	jsonStr := `{
 		"string": "hello world",
 		"integer": 42,
@@ -697,7 +697,7 @@ func TestJSONWithVariousTypes(t *testing.T) {
 }
 
 // TestJSONNumbers tests JSON with various number formats
-func TestJSONNumbers(t *testing.T) {
+func TestJsonNumbers(t *testing.T) {
 	jsonStr := `{
 		"integers": {
 			"zero": 0,
@@ -726,7 +726,7 @@ func TestJSONNumbers(t *testing.T) {
 }
 
 // TestJSONWithSpecialCharacters tests JSON with special characters and unicode
-func TestJSONWithSpecialCharacters(t *testing.T) {
+func TestJsonWithSpecialCharacters(t *testing.T) {
 	jsonStr := `{
 		"english": "Hello, World!",
 		"unicode": "こんにちは 世界 🌍",
@@ -747,7 +747,7 @@ func TestJSONWithSpecialCharacters(t *testing.T) {
 }
 
 // TestGoStructMarshalledToJSON tests Go struct marshalled to JSON
-func TestGoStructMarshalledToJSON(t *testing.T) {
+func TestGoStructMarshalledToJson(t *testing.T) {
 	type Address struct {
 		Street string `json:"street"`
 		City   string `json:"city"`
@@ -792,7 +792,7 @@ func TestGoStructMarshalledToJSON(t *testing.T) {
 }
 
 // TestDeeplyNestedJSON tests deeply nested JSON structure
-func TestDeeplyNestedJSON(t *testing.T) {
+func TestDeeplyNestedJson(t *testing.T) {
 	type Level4 struct {
 		Value string
 	}
@@ -833,7 +833,7 @@ func TestDeeplyNestedJSON(t *testing.T) {
 }
 
 // TestLargeJSON tests larger JSON structure with many fields
-func TestLargeJSON(t *testing.T) {
+func TestLargeJson(t *testing.T) {
 	type Product struct {
 		ID          int      `json:"id"`
 		Name        string   `json:"name"`
@@ -910,7 +910,7 @@ func TestLargeJSON(t *testing.T) {
 }
 
 // TestJSONWithMixedArrays tests JSON with arrays containing different types
-func TestJSONWithMixedArrays(t *testing.T) {
+func TestJsonWithMixedArrays(t *testing.T) {
 	jsonStr := `{
 		"heterogeneous_array": [
 			"string",
@@ -946,7 +946,7 @@ func TestJSONWithMixedArrays(t *testing.T) {
 // ============================================================================
 
 // TestSnapJSONBasic tests the SnapJSON function with basic JSON
-func TestSnapJSONBasic(t *testing.T) {
+func TestSnapJsonBasic(t *testing.T) {
 	jsonStr := `{
 		"name": "John Doe",
 		"email": "john@example.com",
@@ -958,7 +958,7 @@ func TestSnapJSONBasic(t *testing.T) {
 }
 
 // TestSnapJSONSimpleArray tests SnapJSON with simple arrays
-func TestSnapJSONSimpleArray(t *testing.T) {
+func TestSnapJsonSimpleArray(t *testing.T) {
 	jsonStr := `[
 		"apple",
 		"banana",
@@ -970,14 +970,14 @@ func TestSnapJSONSimpleArray(t *testing.T) {
 }
 
 // TestSnapJSONCompactFormat tests SnapJSON with compact (minified) JSON
-func TestSnapJSONCompactFormat(t *testing.T) {
+func TestSnapJsonCompactFormat(t *testing.T) {
 	jsonStr := `{"id":1,"name":"Product","price":99.99,"in_stock":true,"tags":["electronics","gadgets"]}`
 
 	freeze.SnapJSON(t, "SnapJSON Compact Format", jsonStr)
 }
 
 // TestSnapJSONWithNestedObjects tests SnapJSON with nested JSON structures
-func TestSnapJSONWithNestedObjects(t *testing.T) {
+func TestSnapJsonWithNestedObjects(t *testing.T) {
 	jsonStr := `{
 		"user": {
 			"id": 42,
@@ -999,7 +999,7 @@ func TestSnapJSONWithNestedObjects(t *testing.T) {
 }
 
 // TestSnapJSONComplexAPI tests SnapJSON with complex API response
-func TestSnapJSONComplexAPI(t *testing.T) {
+func TestSnapJsonComplexAPI(t *testing.T) {
 	jsonStr := `{
 		"status": "success",
 		"code": 200,
@@ -1041,7 +1041,7 @@ func TestSnapJSONComplexAPI(t *testing.T) {
 }
 
 // TestSnapJSONWithNulls tests SnapJSON handling of null values
-func TestSnapJSONWithNulls(t *testing.T) {
+func TestSnapJsonWithNulls(t *testing.T) {
 	jsonStr := `{
 		"id": 1,
 		"name": "Item",
@@ -1059,7 +1059,7 @@ func TestSnapJSONWithNulls(t *testing.T) {
 }
 
 // TestSnapJSONArrayOfObjects tests SnapJSON with arrays of objects
-func TestSnapJSONArrayOfObjects(t *testing.T) {
+func TestSnapJsonArrayOfObjects(t *testing.T) {
 	jsonStr := `[
 		{
 			"id": 1,
@@ -1088,7 +1088,7 @@ func TestSnapJSONArrayOfObjects(t *testing.T) {
 }
 
 // TestSnapJSONLargeNestedStructure tests SnapJSON with deeply nested JSON
-func TestSnapJSONLargeNestedStructure(t *testing.T) {
+func TestSnapJsonLargeNestedStructure(t *testing.T) {
 	jsonStr := `{
 		"organization": {
 			"name": "TechCorp",
@@ -1151,7 +1151,7 @@ func TestSnapJSONLargeNestedStructure(t *testing.T) {
 }
 
 // TestSnapJSONWithNumbers tests SnapJSON with various number formats
-func TestSnapJSONWithNumbers(t *testing.T) {
+func TestSnapJsonWithNumbers(t *testing.T) {
 	jsonStr := `{
 		"integers": [0, 1, -1, 42, -100, 9999999],
 		"floats": [0.0, 3.14, -2.5, 0.001, 1.23e-4, 5.67e10],
@@ -1171,7 +1171,7 @@ func TestSnapJSONWithNumbers(t *testing.T) {
 }
 
 // TestSnapJSONWithSpecialCharacters tests SnapJSON with special chars
-func TestSnapJSONWithSpecialCharacters(t *testing.T) {
+func TestSnapJsonWithSpecialCharacters(t *testing.T) {
 	jsonStr := `{
 		"special": "!@#$%^&*()_+-=[]{}|;:',.<>?/",
 		"escaped": "line1\nline2\ttab\rcarriage",
@@ -1186,7 +1186,7 @@ func TestSnapJSONWithSpecialCharacters(t *testing.T) {
 }
 
 // TestSnapJSONEmptyStructures tests SnapJSON with empty collections
-func TestSnapJSONEmptyStructures(t *testing.T) {
+func TestSnapJsonEmptyStructures(t *testing.T) {
 	jsonStr := `{
 		"empty_array": [],
 		"empty_object": {},
@@ -1204,7 +1204,7 @@ func TestSnapJSONEmptyStructures(t *testing.T) {
 }
 
 // TestSnapJSONMixedTypes tests SnapJSON with mixed array types
-func TestSnapJSONMixedTypes(t *testing.T) {
+func TestSnapJsonMixedTypes(t *testing.T) {
 	jsonStr := `{
 		"mixed_array": [
 			"string",
@@ -1229,7 +1229,7 @@ func TestSnapJSONMixedTypes(t *testing.T) {
 }
 
 // TestSnapJSONRealWorldExample tests SnapJSON with real-world API data
-func TestSnapJSONRealWorldExample(t *testing.T) {
+func TestSnapJsonRealWorldExample(t *testing.T) {
 	jsonStr := `{
 		"success": true,
 		"data": {

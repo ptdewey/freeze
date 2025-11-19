@@ -1,6 +1,6 @@
 ---
 title: Large JSON Structure
-test_name: TestLargeJSON
+test_name: TestLargeJson
 file_path: 
 func_name: 
 version: 0.1.0

@@ -23,7 +23,7 @@ const (
 	DiffNew
 )
 
-func newSnapshotBoxInternal(snap *files.Snapshot, isFuncSnapshot bool) string {
+func newSnapshotBoxInternal(snap *files.Snapshot) string {
 	width := TerminalWidth()
 	snapshotFileName := files.SnapshotFileName(snap.Name) + ".snap.new"
 
@@ -36,6 +36,7 @@ func newSnapshotBoxInternal(snap *files.Snapshot, isFuncSnapshot bool) string {
 	if snap.Name != "" {
 		sb.WriteString(fmt.Sprintf("  test: %s\n", Blue(snap.Name)))
 	}
+	// TODO: maybe put this on the "new snapshot row"? (or only show on the diff view)
 	if snapshotFileName != "" {
 		sb.WriteString(fmt.Sprintf("  file: %s\n", Gray(snapshotFileName)))
 	}
@@ -45,7 +46,8 @@ func newSnapshotBoxInternal(snap *files.Snapshot, isFuncSnapshot bool) string {
 	numLines := len(lines)
 	lineNumWidth := len(strconv.Itoa(numLines))
 
-	topBar := strings.Repeat("─", lineNumWidth+3) + "┬" + strings.Repeat("─", width-lineNumWidth-2) + "\n"
+	topBar := strings.Repeat("─", lineNumWidth+3) + "┬" +
+		strings.Repeat("─", width-lineNumWidth-2) + "\n"
 	sb.WriteString(topBar)
 
 	for i, line := range lines {
@@ -60,18 +62,15 @@ func newSnapshotBoxInternal(snap *files.Snapshot, isFuncSnapshot bool) string {
 		sb.WriteString(fmt.Sprintf("  %s\n", display))
 	}
 
-	bottomBar := strings.Repeat("─", lineNumWidth+3) + "┴" + strings.Repeat("─", width-lineNumWidth-2) + "\n"
+	bottomBar := strings.Repeat("─", lineNumWidth+3) + "┴" +
+		strings.Repeat("─", width-lineNumWidth-2) + "\n"
 	sb.WriteString(bottomBar)
 
 	return sb.String()
 }
 
 func NewSnapshotBox(snap *files.Snapshot) string {
-	return newSnapshotBoxInternal(snap, false)
-}
-
-func NewSnapshotBoxFunc(snap *files.Snapshot) string {
-	return newSnapshotBoxInternal(snap, true)
+	return newSnapshotBoxInternal(snap)
 }
 
 func DiffSnapshotBox(old, new *files.Snapshot, diffLines []DiffLine) string {

@@ -1,6 +1,6 @@
 ---
 title: JSON with Mixed Arrays
-test_name: TestJSONWithMixedArrays
+test_name: TestJsonWithMixedArrays
 file_path: 
 func_name: 
 version: 0.1.0

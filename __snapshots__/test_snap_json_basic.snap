@@ -1,0 +1,13 @@
+---
+title: SnapJSON Basic Object
+test_name: TestSnapJsonBasic
+file_path: 
+func_name: 
+version: 0.1.0
+---
+{
+  "age": 30,
+  "email": "john@example.com",
+  "name": "John Doe",
+  "verified": true
+}

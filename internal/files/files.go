@@ -18,7 +18,10 @@ type Snapshot struct {
 }
 
 func (s *Snapshot) Serialize() string {
-	header := fmt.Sprintf("---\ntitle: %s\ntest_name: %s\nfile_path: %s\nfunc_name: %s\nversion: %s\n---\n", s.Title, s.Name, s.FilePath, s.FuncName, s.Version)
+	header := fmt.Sprintf(
+		"---\ntitle: %s\ntest_name: %s\nfile_path: %s\nfunc_name: %s\nversion: %s\n---\n",
+		s.Title, s.Name, s.FilePath, s.FuncName, s.Version,
+	)
 	return header + s.Content
 }
 
@@ -64,6 +67,7 @@ func Deserialize(raw string) (*Snapshot, error) {
 	return snap, nil
 }
 
+// TODO: make snapshots in root vs package dirs a configurable option?
 func findProjectRoot() (string, error) {
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -85,12 +89,14 @@ func findProjectRoot() (string, error) {
 }
 
 func getSnapshotDir() (string, error) {
-	root, err := findProjectRoot()
-	if err != nil {
-		return "", err
-	}
-
-	snapshotDir := filepath.Join(root, "__snapshots__")
+	// NOTE: maybe this could be configurable?
+	// Storing snapshots in root may be desirable in some cases
+	// root, err := findProjectRoot()
+	// if err != nil {
+	// 	return "", err
+	// }
+	// snapshotDir := filepath.Join(root, "__snapshots__")
+	snapshotDir := "__snapshots__"
 	if err := os.MkdirAll(snapshotDir, 0755); err != nil {
 		return "", err
 	}

@@ -24,9 +24,9 @@ func SnapString(t testingT, title string, content string) {
 	snap(t, title, content)
 }
 
-// SnapJSON takes a JSON string, unmarshals it, and then marshals it back with
-// pretty-printing before snapshotting. This ensures consistent formatting and
-// validates the JSON structure.
+// SnapJSON takes a JSON string, validates it, and pretty-prints it with
+// consistent formatting before snapshotting. This preserves the raw JSON
+// format while ensuring valid JSON structure.
 func SnapJSON(t testingT, title string, jsonStr string) {
 	t.Helper()
 
@@ -36,9 +36,14 @@ func SnapJSON(t testingT, title string, jsonStr string) {
 		return
 	}
 
-	// Format the JSON data using the same mechanism as Snap
-	content := formatValue(data)
-	snap(t, title, content)
+	// Pretty-print the JSON with consistent indentation
+	prettyJSON, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		t.Error("failed to marshal JSON:", err)
+		return
+	}
+
+	snap(t, title, string(prettyJSON))
 }
 
 func Snap(t testingT, title string, values ...any) {

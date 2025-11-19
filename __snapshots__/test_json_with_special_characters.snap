@@ -1,6 +1,6 @@
 ---
 title: JSON with Special Characters
-test_name: TestJSONWithSpecialCharacters
+test_name: TestJsonWithSpecialCharacters
 file_path: 
 func_name: 
 version: 0.1.0

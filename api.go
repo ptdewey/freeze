@@ -1,47 +1,46 @@
 package freeze
 
 import (
-	"github.com/ptdewey/freeze/internal/api"
+	"github.com/ptdewey/freeze/internal/diff"
+	"github.com/ptdewey/freeze/internal/files"
+	"github.com/ptdewey/freeze/internal/pretty"
 )
 
-type Snapshot = api.Snapshot
+type Snapshot = files.Snapshot
 
-type DiffLine = api.DiffLine
+type DiffLine = diff.DiffLine
 
 const (
-	DiffShared = api.DiffShared
-	DiffOld    = api.DiffOld
-	DiffNew    = api.DiffNew
+	DiffShared = diff.DiffShared
+	DiffOld    = diff.DiffOld
+	DiffNew    = diff.DiffNew
 )
 
 func Deserialize(raw string) (*Snapshot, error) {
-	return api.Deserialize(raw)
+	return files.Deserialize(raw)
 }
 
 func SaveSnapshot(snap *Snapshot, state string) error {
-	return api.SaveSnapshot(snap, state)
+	return files.SaveSnapshot(snap, state)
 }
 
 func ReadSnapshot(testName string, state string) (*Snapshot, error) {
-	return api.ReadSnapshot(testName, state)
+	return files.ReadSnapshot(testName, state)
 }
 
 func SnapshotFileName(testName string) string {
-	return api.SnapshotFileName(testName)
+	return files.SnapshotFileName(testName)
 }
 
 func Histogram(old, new string) []DiffLine {
-	return api.Histogram(old, new)
+	return diff.Histogram(old, new)
 }
 
 func NewSnapshotBox(snap *Snapshot) string {
-	return api.NewSnapshotBox(snap)
+	return pretty.NewSnapshotBox(snap)
 }
 
-func NewSnapshotBoxFunc(snap *Snapshot) string {
-	return api.NewSnapshotBoxFunc(snap)
-}
-
-func DiffSnapshotBox(old, new *Snapshot) string {
-	return api.DiffSnapshotBox(old, new)
+func DiffSnapshotBox(oldSnap, newSnap *Snapshot) string {
+	diffLines := convertDiffLines(diff.Histogram(oldSnap.Content, newSnap.Content))
+	return pretty.DiffSnapshotBox(oldSnap, newSnap, diffLines)
 }
