@@ -1,7 +1,6 @@
 package pretty
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 )
@@ -22,15 +21,6 @@ func TerminalWidth() int {
 		return w
 	}
 	return 80
-}
-
-func ClearScreen() {
-	fmt.Print("\033[2J")
-	fmt.Print("\033[H")
-}
-
-func ClearLine() {
-	fmt.Print("\033[K")
 }
 
 func Red(s string) string {

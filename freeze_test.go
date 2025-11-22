@@ -2,6 +2,7 @@ package freeze_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -26,7 +27,7 @@ type CustomStruct struct {
 }
 
 func (c CustomStruct) Format() string {
-	return "CustomStruct{Name: " + c.Name + ", Age: " + string(rune(c.Age)) + "}"
+	return fmt.Sprintf("CustomStruct{Name: %s, Age: %d}", c.Name, c.Age)
 }
 
 func TestSnapCustomType(t *testing.T) {
@@ -257,11 +258,11 @@ func TestComplexNestedStructure(t *testing.T) {
 		CreatedAt: time.Date(2023, 1, 15, 10, 30, 0, 0, time.UTC),
 		Roles:     []string{"admin", "moderator", "user"},
 		Metadata: map[string]any{
-			"theme":         "dark",
+			"theme":         "darker",
 			"notifications": true,
-			"language":      "en",
+			"language":      "en-utf-8",
 			"preferences": map[string]any{
-				"email_frequency": "weekly",
+				"email_frequency": "bi-weekly",
 				"notifications":   true,
 			},
 		},

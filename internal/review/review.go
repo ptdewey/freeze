@@ -23,18 +23,8 @@ const (
 	Quit
 )
 
-func computeDiffLines(old, new *files.Snapshot) []pretty.DiffLine {
-	diffLines := diff.Histogram(old.Content, new.Content)
-	result := make([]pretty.DiffLine, len(diffLines))
-	for i, dl := range diffLines {
-		result[i] = pretty.DiffLine{
-			OldNumber: dl.OldNumber,
-			NewNumber: dl.NewNumber,
-			Line:      dl.Line,
-			Kind:      pretty.DiffKind(dl.Kind),
-		}
-	}
-	return result
+func computeDiffLines(old, new *files.Snapshot) []diff.DiffLine {
+	return diff.Histogram(old.Content, new.Content)
 }
 
 func Review() error {
@@ -56,7 +46,6 @@ func Review() error {
 
 func reviewLoop(snapshots []string) error {
 	reader := bufio.NewReader(os.Stdin)
-	showDiff := false
 
 	for i, testName := range snapshots {
 		fmt.Printf("\n[%d/%d] %s\n", i+1, len(snapshots), pretty.Header(testName))
@@ -69,10 +58,7 @@ func reviewLoop(snapshots []string) error {
 
 		accepted, acceptErr := files.ReadSnapshot(testName, "accepted")
 
-		if acceptErr == nil && showDiff {
-			diffLines := computeDiffLines(accepted, newSnap)
-			fmt.Println(pretty.DiffSnapshotBox(accepted, newSnap, diffLines))
-		} else if acceptErr == nil {
+		if acceptErr == nil {
 			diffLines := computeDiffLines(accepted, newSnap)
 			fmt.Println(pretty.DiffSnapshotBox(accepted, newSnap, diffLines))
 		} else {

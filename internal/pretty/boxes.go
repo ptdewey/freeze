@@ -5,43 +5,30 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ptdewey/freeze/internal/diff"
 	"github.com/ptdewey/freeze/internal/files"
-)
-
-type DiffLine struct {
-	OldNumber int
-	NewNumber int
-	Line      string
-	Kind      DiffKind
-}
-
-type DiffKind int
-
-const (
-	DiffShared DiffKind = iota
-	DiffOld
-	DiffNew
 )
 
 func NewSnapshotBox(snap *files.Snapshot) string {
 	return newSnapshotBoxInternal(snap)
 }
 
-func DiffSnapshotBox(old, new *files.Snapshot, diffLines []DiffLine) string {
+func DiffSnapshotBox(old, newSnapshot *files.Snapshot, diffLines []diff.DiffLine) string {
 	width := TerminalWidth()
-	snapshotFileName := files.SnapshotFileName(new.Test) + ".snap"
+	snapshotFileName := files.SnapshotFileName(newSnapshot.Test) + ".snap"
 
 	var sb strings.Builder
-	sb.WriteString(strings.Repeat("─", width) + "\n")
+	sb.WriteString("─── " + "Review Snapshot " + strings.Repeat("─", width-20) + "\n\n")
+
 	// TODO: maybe make helper functions for this, swap coloring between the key and the value
 	// TODO: maybe show the snapshot file name in gray next to the "a/r/s" options
 	// (i.e. "a accept -> snap_file_name.snap", "reject" w/strikethrough?, skip, keeps "*snap.new")
-	sb.WriteString(fmt.Sprintf("  file: %s\n", Gray(snapshotFileName)))
-	sb.WriteString(fmt.Sprintf("  %s\n", Blue("Snapshot Diff")))
-	if new.Title != "" {
-		sb.WriteString(fmt.Sprintf("  title: %s\n", Blue("\""+new.Title+"\"")))
+	if newSnapshot.Title != "" {
+		sb.WriteString(Blue("  title: ") + newSnapshot.Title + "\n")
 	}
-	sb.WriteString(fmt.Sprintf("  test: %s\n", Blue("\""+new.Test+"\"")))
+	sb.WriteString(Blue("  test: ") + newSnapshot.Test + "\n")
+	sb.WriteString(Blue("  file: ") + snapshotFileName + "\n")
+	sb.WriteString("\n")
 	sb.WriteString(strings.Repeat("─", width) + "\n")
 
 	// Calculate max line numbers for proper spacing
@@ -63,17 +50,17 @@ func DiffSnapshotBox(old, new *files.Snapshot, diffLines []DiffLine) string {
 		var formatted string
 
 		switch dl.Kind {
-		case DiffOld:
+		case diff.DiffOld:
 			oldNumStr = fmt.Sprintf("%*d", oldWidth, dl.OldNumber)
 			newNumStr = strings.Repeat(" ", newWidth)
 			prefix = Red("−")
 			formatted = Red(dl.Line)
-		case DiffNew:
+		case diff.DiffNew:
 			oldNumStr = strings.Repeat(" ", oldWidth)
 			newNumStr = fmt.Sprintf("%*d", newWidth, dl.NewNumber)
 			prefix = Green("+")
 			formatted = Green(dl.Line)
-		case DiffShared:
+		case diff.DiffShared:
 			oldNumStr = fmt.Sprintf("%*d", oldWidth, dl.OldNumber)
 			newNumStr = fmt.Sprintf("%*d", newWidth, dl.NewNumber)
 			prefix = " "
