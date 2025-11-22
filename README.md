@@ -1,4 +1,4 @@
-# Freeze
+# shutter
 
 A [birdie](https://github.com/giacomocavalieri/birdie) and [insta](https://github.com/mitsuhiko/insta) inspired snapshot testing library for Go.
 
@@ -21,13 +21,13 @@ package package_test
 
 func TestSomething(t *testing.T) {
     result := SomeFunction("foo")
-    shutter.Snap(t, result)
+    shutter.Snap(t, "test title", result)
 }
 ```
 
 ### Advanced Usage: Scrubbers and Ignore Patterns
 
-Freeze supports data scrubbing and field filtering to handle dynamic or sensitive data in snapshots.
+shutter supports data scrubbing and field filtering to handle dynamic or sensitive data in snapshots.
 
 #### Scrubbers
 
@@ -36,16 +36,17 @@ Scrubbers transform content before snapshotting, typically to replace dynamic or
 ```go
 func TestUserAPI(t *testing.T) {
     user := api.GetUser("123")
-    
+
     // Replace UUIDs and timestamps with placeholders
-    shutter.SnapWithOptions(t, "user", []shutter.SnapshotOption{
+    shutter.Snap(t, "user", user,
         shutter.ScrubUUIDs(),
         shutter.ScrubTimestamps(),
-    }, user)
+    )
 }
 ```
 
 **Built-in Scrubbers:**
+
 - `ScrubUUIDs()` - Replaces UUIDs with `<UUID>`
 - `ScrubTimestamps()` - Replaces ISO8601 timestamps with `<TIMESTAMP>`
 - `ScrubEmails()` - Replaces email addresses with `<EMAIL>`
@@ -78,17 +79,18 @@ Ignore patterns remove specific fields from JSON structures before snapshotting:
 ```go
 func TestAPIResponse(t *testing.T) {
     response := api.GetData()
-    
+
     // Ignore sensitive fields and null values
-    shutter.SnapJSONWithOptions(t, "response", response, []shutter.SnapshotOption{
+    shutter.SnapJSON(t, "response", response,
         shutter.IgnoreSensitiveKeys(),
         shutter.IgnoreNullValues(),
         shutter.IgnoreKeys("created_at", "updated_at"),
-    })
+    )
 }
 ```
 
 **Built-in Ignore Patterns:**
+
 - `IgnoreSensitiveKeys()` - Ignores common sensitive keys (password, token, api_key, etc.)
 - `IgnoreEmptyValues()` - Ignores fields with empty string values
 - `IgnoreNullValues()` - Ignores fields with null values
@@ -121,34 +123,34 @@ You can combine multiple scrubbers and ignore patterns:
 ```go
 func TestComplexData(t *testing.T) {
     data := generateTestData()
-    
-    shutter.SnapWithOptions(t, "data", []shutter.SnapshotOption{
+
+    shutter.Snap(t, "data", data,
         // Scrubbers
         shutter.ScrubUUIDs(),
         shutter.ScrubTimestamps(),
         shutter.ScrubEmails(),
-        
+
         // Ignore patterns
         shutter.IgnoreSensitiveKeys(),
         shutter.IgnoreKeys("debug_info"),
         shutter.IgnoreNullValues(),
-    }, data)
+    )
 }
 ```
 
 #### API Reference
 
-Three snapshot functions support options:
+All snapshot functions support options as variadic parameters:
 
 ```go
 // For general values (structs, maps, slices, etc.)
-shutter.SnapWithOptions(t, "title", []shutter.SnapshotOption{...}, value)
+shutter.Snap(t, "title", value, options...)
 
 // For JSON strings
-shutter.SnapJSONWithOptions(t, "title", jsonString, []shutter.SnapshotOption{...})
+shutter.SnapJSON(t, "title", jsonString, options...)
 
 // For plain strings
-shutter.SnapStringWithOptions(t, "title", content, []shutter.SnapshotOption{...})
+shutter.SnapString(t, "title", content, options...)
 ```
 
 ### Reviewing Snapshots
@@ -159,7 +161,7 @@ To review a set of snapshots, run:
 go run github.com/ptdewey/shutter/cmd/shutter review
 ```
 
-Freeze can also be used programmatically:
+shutter can also be used programmatically:
 
 ```go
 // Example: tools/shutter/main.go
@@ -179,7 +181,7 @@ Which can then be run with:
 go run tools/shutter/main.go
 ```
 
-Freeze also includes (in a separate Go module) a [Bubbletea](https://github.com/charmbracelet/bubbletea) TUI in [cmd/tui/main.go](./cmd/tui/main.go).
+shutter also includes (in a separate Go module) a [Bubbletea](https://github.com/charmbracelet/bubbletea) TUI in [cmd/tui/main.go](./cmd/tui/main.go).
 (The TUI is shipped in a separate module to make the added dependencies optional)
 
 ### TUI Usage
@@ -215,5 +217,5 @@ go run github.com/ptdewey/shutter/cmd/tui reject-all
 ## Other Libraries
 
 - [go-snaps](https://github.com/gkampitakis/go-snaps)
-  - Freeze uses the diff implementation from `go-snaps`.
+  - shutter uses the diff implementation from `go-snaps`.
 - [cupaloy](https://github.com/bradleyjkemp/cupaloy)

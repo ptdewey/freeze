@@ -14,9 +14,9 @@ func TestScrubUUIDs(t *testing.T) {
 		"name": "John Doe"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Scrubbed UUIDs", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Scrubbed UUIDs", jsonStr,
 		shutter.ScrubUUIDs(),
-	})
+	)
 }
 
 func TestScrubTimestamps(t *testing.T) {
@@ -27,9 +27,9 @@ func TestScrubTimestamps(t *testing.T) {
 		"name": "Test Event"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Scrubbed Timestamps", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Scrubbed Timestamps", jsonStr,
 		shutter.ScrubTimestamps(),
-	})
+	)
 }
 
 func TestScrubEmails(t *testing.T) {
@@ -39,9 +39,9 @@ func TestScrubEmails(t *testing.T) {
 		"name": "John Doe"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Scrubbed Emails", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Scrubbed Emails", jsonStr,
 		shutter.ScrubEmails(),
-	})
+	)
 }
 
 func TestScrubIPAddresses(t *testing.T) {
@@ -51,9 +51,9 @@ func TestScrubIPAddresses(t *testing.T) {
 		"message": "Connection from 172.16.0.100"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Scrubbed IPs", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Scrubbed IPs", jsonStr,
 		shutter.ScrubIPAddresses(),
-	})
+	)
 }
 
 func TestScrubJWTs(t *testing.T) {
@@ -62,9 +62,9 @@ func TestScrubJWTs(t *testing.T) {
 		"refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Scrubbed JWTs", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Scrubbed JWTs", jsonStr,
 		shutter.ScrubJWTs(),
-	})
+	)
 }
 
 func TestMultipleScrubbers(t *testing.T) {
@@ -76,12 +76,12 @@ func TestMultipleScrubbers(t *testing.T) {
 		"name": "John Doe"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Multiple Scrubbers", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Multiple Scrubbers", jsonStr,
 		shutter.ScrubUUIDs(),
 		shutter.ScrubEmails(),
 		shutter.ScrubTimestamps(),
 		shutter.ScrubIPAddresses(),
-	})
+	)
 }
 
 func TestRegexScrubber(t *testing.T) {
@@ -91,27 +91,27 @@ func TestRegexScrubber(t *testing.T) {
 		"name": "Test User"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Custom Regex Scrubber", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Custom Regex Scrubber", jsonStr,
 		shutter.RegexScrubber(`sk_(live|test)_[a-zA-Z0-9]+`, "<API_KEY>"),
-	})
+	)
 }
 
 func TestExactMatchScrubber(t *testing.T) {
 	content := "The secret password is 'p@ssw0rd123' and should be hidden."
 
-	shutter.SnapStringWithOptions(t, "Exact Match Scrubber", content, []shutter.SnapshotOption{
+	shutter.SnapString(t, "Exact Match Scrubber", content,
 		shutter.ExactMatchScrubber("p@ssw0rd123", "<PASSWORD>"),
-	})
+	)
 }
 
 func TestCustomScrubber(t *testing.T) {
 	content := "Hello World! This is a TEST."
 
-	shutter.SnapStringWithOptions(t, "Custom Scrubber", content, []shutter.SnapshotOption{
+	shutter.SnapString(t, "Custom Scrubber", content,
 		shutter.CustomScrubber(func(s string) string {
 			return strings.ToLower(s)
 		}),
-	})
+	)
 }
 
 func TestScrubDates(t *testing.T) {
@@ -122,9 +122,9 @@ func TestScrubDates(t *testing.T) {
 		"name": "John Doe"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Scrubbed Dates", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Scrubbed Dates", jsonStr,
 		shutter.ScrubDates(),
-	})
+	)
 }
 
 func TestScrubAPIKeys(t *testing.T) {
@@ -135,9 +135,9 @@ func TestScrubAPIKeys(t *testing.T) {
 		"name": "Test Config"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Scrubbed API Keys", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Scrubbed API Keys", jsonStr,
 		shutter.ScrubAPIKeys(),
-	})
+	)
 }
 
 func TestScrubWithSnapFunction(t *testing.T) {
@@ -148,11 +148,11 @@ func TestScrubWithSnapFunction(t *testing.T) {
 		"name":       "John Doe",
 	}
 
-	shutter.SnapWithOptions(t, "Scrub With Snap", []shutter.SnapshotOption{
+	shutter.Snap(t, "Scrub With Snap", data,
 		shutter.ScrubUUIDs(),
 		shutter.ScrubEmails(),
 		shutter.ScrubTimestamps(),
-	}, data)
+	)
 }
 
 func TestCreditCardScrubbing(t *testing.T) {
@@ -163,9 +163,9 @@ func TestCreditCardScrubbing(t *testing.T) {
 		"name": "John Doe"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Scrubbed Credit Cards", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Scrubbed Credit Cards", jsonStr,
 		shutter.ScrubCreditCards(),
-	})
+	)
 }
 
 func TestUnixTimestampScrubbing(t *testing.T) {
@@ -176,7 +176,7 @@ func TestUnixTimestampScrubbing(t *testing.T) {
 		"name": "Test Event"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Scrubbed Unix Timestamps", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Scrubbed Unix Timestamps", jsonStr,
 		shutter.ScrubUnixTimestamps(),
-	})
+	)
 }

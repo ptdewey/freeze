@@ -14,10 +14,10 @@ func TestIgnoreKeyValue(t *testing.T) {
 		"api_key": "sk_live_abc123"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Ignore Password Field", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Ignore Password Field", jsonStr,
 		shutter.IgnoreKeyValue("password", "*"),
 		shutter.IgnoreKeyValue("api_key", "*"),
-	})
+	)
 }
 
 func TestIgnoreKeys(t *testing.T) {
@@ -30,9 +30,9 @@ func TestIgnoreKeys(t *testing.T) {
 		"email": "john@example.com"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Ignore Multiple Keys", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Ignore Multiple Keys", jsonStr,
 		shutter.IgnoreKeys("password", "secret", "token"),
-	})
+	)
 }
 
 func TestIgnoreSensitiveKeys(t *testing.T) {
@@ -46,9 +46,9 @@ func TestIgnoreSensitiveKeys(t *testing.T) {
 		"name": "John Doe"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Ignore Sensitive Keys", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Ignore Sensitive Keys", jsonStr,
 		shutter.IgnoreSensitiveKeys(),
-	})
+	)
 }
 
 func TestIgnoreKeysMatching(t *testing.T) {
@@ -60,9 +60,9 @@ func TestIgnoreKeysMatching(t *testing.T) {
 		"product_name": "Widget"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Ignore Keys Matching Pattern", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Ignore Keys Matching Pattern", jsonStr,
 		shutter.IgnoreKeysMatching(`^user_`),
-	})
+	)
 }
 
 func TestIgnoreKeyPattern(t *testing.T) {
@@ -74,10 +74,10 @@ func TestIgnoreKeyPattern(t *testing.T) {
 		"email": "john@example.com"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Ignore Key Pattern", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Ignore Key Pattern", jsonStr,
 		shutter.IgnoreKeyPattern(`.*password.*`, ""),
 		shutter.IgnoreKeyPattern(`.*token.*`, ""),
-	})
+	)
 }
 
 func TestIgnoreValues(t *testing.T) {
@@ -88,9 +88,9 @@ func TestIgnoreValues(t *testing.T) {
 		"state": "pending"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Ignore Specific Values", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Ignore Specific Values", jsonStr,
 		shutter.IgnoreValues("pending"),
-	})
+	)
 }
 
 func TestIgnoreEmptyValues(t *testing.T) {
@@ -102,9 +102,9 @@ func TestIgnoreEmptyValues(t *testing.T) {
 		"phone": ""
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Ignore Empty Values", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Ignore Empty Values", jsonStr,
 		shutter.IgnoreEmptyValues(),
-	})
+	)
 }
 
 func TestIgnoreNullValues(t *testing.T) {
@@ -116,9 +116,9 @@ func TestIgnoreNullValues(t *testing.T) {
 		"age": 30
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Ignore Null Values", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Ignore Null Values", jsonStr,
 		shutter.IgnoreNullValues(),
-	})
+	)
 }
 
 func TestCustomIgnore(t *testing.T) {
@@ -130,12 +130,12 @@ func TestCustomIgnore(t *testing.T) {
 		"grade": "A"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Custom Ignore Function", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Custom Ignore Function", jsonStr,
 		shutter.CustomIgnore(func(key, value string) bool {
 			// Ignore numeric values
 			return value == "1" || value == "25" || value == "95"
 		}),
-	})
+	)
 }
 
 func TestNestedIgnorePatterns(t *testing.T) {
@@ -157,9 +157,9 @@ func TestNestedIgnorePatterns(t *testing.T) {
 		}
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Nested Ignore Patterns", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Nested Ignore Patterns", jsonStr,
 		shutter.IgnoreSensitiveKeys(),
-	})
+	)
 }
 
 func TestCombinedIgnoreAndScrub(t *testing.T) {
@@ -173,7 +173,7 @@ func TestCombinedIgnoreAndScrub(t *testing.T) {
 		"ip_address": "192.168.1.1"
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Combined Ignore and Scrub", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Combined Ignore and Scrub", jsonStr,
 		// Ignore sensitive keys entirely
 		shutter.IgnoreKeys("password", "api_key"),
 		// Scrub dynamic/identifiable data
@@ -181,7 +181,7 @@ func TestCombinedIgnoreAndScrub(t *testing.T) {
 		shutter.ScrubEmails(),
 		shutter.ScrubTimestamps(),
 		shutter.ScrubIPAddresses(),
-	})
+	)
 }
 
 func TestIgnoreInArrays(t *testing.T) {
@@ -202,9 +202,9 @@ func TestIgnoreInArrays(t *testing.T) {
 		]
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Ignore in Arrays", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Ignore in Arrays", jsonStr,
 		shutter.IgnoreKeys("password"),
-	})
+	)
 }
 
 func TestComplexRealWorldExample(t *testing.T) {
@@ -234,7 +234,7 @@ func TestComplexRealWorldExample(t *testing.T) {
 		}
 	}`
 
-	shutter.SnapJSONWithOptions(t, "Real World API Response", jsonStr, []shutter.SnapshotOption{
+	shutter.SnapJSON(t, "Real World API Response", jsonStr,
 		// Ignore sensitive fields
 		shutter.IgnoreSensitiveKeys(),
 		shutter.IgnoreKeys("card_number"),
@@ -244,5 +244,5 @@ func TestComplexRealWorldExample(t *testing.T) {
 		shutter.ScrubTimestamps(),
 		shutter.ScrubIPAddresses(),
 		shutter.ScrubJWTs(),
-	})
+	)
 }

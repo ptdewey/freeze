@@ -5,19 +5,13 @@ import (
 	"strings"
 )
 
-// Scrubber transforms content before snapshotting, typically to remove
-// or replace dynamic or sensitive data.
-type Scrubber interface {
-	Scrub(content string) string
-}
-
 // regexScrubber replaces all matches of a regex pattern with a replacement string.
 type regexScrubber struct {
 	pattern     *regexp.Regexp
 	replacement string
 }
 
-func (r *regexScrubber) Scrub(content string) string {
+func (r *regexScrubber) Apply(content string) string {
 	return r.pattern.ReplaceAllString(content, r.replacement)
 }
 
@@ -25,10 +19,10 @@ func (r *regexScrubber) Scrub(content string) string {
 // regex pattern with the replacement string.
 func RegexScrubber(pattern string, replacement string) SnapshotOption {
 	re := regexp.MustCompile(pattern)
-	return WithScrubber(&regexScrubber{
+	return &regexScrubber{
 		pattern:     re,
 		replacement: replacement,
-	})
+	}
 }
 
 // exactMatchScrubber replaces exact string matches with a replacement.
@@ -37,16 +31,16 @@ type exactMatchScrubber struct {
 	replacement string
 }
 
-func (e *exactMatchScrubber) Scrub(content string) string {
+func (e *exactMatchScrubber) Apply(content string) string {
 	return strings.ReplaceAll(content, e.match, e.replacement)
 }
 
 // ExactMatchScrubber creates a scrubber that replaces exact string matches.
 func ExactMatchScrubber(match string, replacement string) SnapshotOption {
-	return WithScrubber(&exactMatchScrubber{
+	return &exactMatchScrubber{
 		match:       match,
 		replacement: replacement,
-	})
+	}
 }
 
 // Common regex patterns for scrubbing
@@ -66,88 +60,88 @@ var (
 
 // ScrubUUIDs replaces all UUIDs with "<UUID>".
 func ScrubUUIDs() SnapshotOption {
-	return WithScrubber(&regexScrubber{
+	return &regexScrubber{
 		pattern:     uuidPattern,
 		replacement: "<UUID>",
-	})
+	}
 }
 
 // ScrubTimestamps replaces ISO8601 timestamps with "<TIMESTAMP>".
 func ScrubTimestamps() SnapshotOption {
-	return WithScrubber(&regexScrubber{
+	return &regexScrubber{
 		pattern:     iso8601Pattern,
 		replacement: "<TIMESTAMP>",
-	})
+	}
 }
 
 // ScrubEmails replaces email addresses with "<EMAIL>".
 func ScrubEmails() SnapshotOption {
-	return WithScrubber(&regexScrubber{
+	return &regexScrubber{
 		pattern:     emailPattern,
 		replacement: "<EMAIL>",
-	})
+	}
 }
 
 // ScrubUnixTimestamps replaces Unix timestamps (10-13 digits) with "<UNIX_TS>".
 // Note: This is aggressive and may match other long numbers. For more conservative
 // scrubbing with context keywords, use a custom regex.
 func ScrubUnixTimestamps() SnapshotOption {
-	return WithScrubber(&regexScrubber{
+	return &regexScrubber{
 		pattern:     unixTsPattern,
 		replacement: "<UNIX_TS>",
-	})
+	}
 }
 
 // ScrubIPAddresses replaces IPv4 addresses with "<IP>".
 func ScrubIPAddresses() SnapshotOption {
-	return WithScrubber(&regexScrubber{
+	return &regexScrubber{
 		pattern:     ipv4Pattern,
 		replacement: "<IP>",
-	})
+	}
 }
 
 func ScrubCreditCards() SnapshotOption {
-	return WithScrubber(&regexScrubber{
+	return &regexScrubber{
 		pattern:     creditCardPattern,
 		replacement: "<CREDIT_CARD>",
-	})
+	}
 }
 
 func ScrubJWTs() SnapshotOption {
-	return WithScrubber(&regexScrubber{
+	return &regexScrubber{
 		pattern:     jwtPattern,
 		replacement: "<JWT>",
-	})
+	}
 }
 
 func ScrubDates() SnapshotOption {
 	datePattern := regexp.MustCompile(`\b\d{4}[-/]\d{2}[-/]\d{2}\b|\b\d{2}[-/]\d{2}[-/]\d{4}\b`)
-	return WithScrubber(&regexScrubber{
+	return &regexScrubber{
 		pattern:     datePattern,
 		replacement: "<DATE>",
-	})
+	}
 }
 
 // ScrubAPIKeys replaces common API key patterns with "<API_KEY>".
 // Matches patterns like: sk_live_..., pk_test_..., api_key_...
 func ScrubAPIKeys() SnapshotOption {
 	apiKeyPattern := regexp.MustCompile(`\b(sk|pk|api[_-]?key)[_-](live|test|prod|dev)[_-][a-zA-Z0-9]+\b`)
-	return WithScrubber(&regexScrubber{
+	return &regexScrubber{
 		pattern:     apiKeyPattern,
 		replacement: "<API_KEY>",
-	})
+	}
 }
 
 type customScrubber struct {
 	scrubFunc func(string) string
 }
 
-func (c *customScrubber) Scrub(content string) string {
+func (c *customScrubber) Apply(content string) string {
 	return c.scrubFunc(content)
 }
 
 func CustomScrubber(scrubFunc func(string) string) SnapshotOption {
-	return WithScrubber(&customScrubber{
+	return &customScrubber{
 		scrubFunc: scrubFunc,
-	})
+	}
 }
