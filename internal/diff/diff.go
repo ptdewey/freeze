@@ -103,20 +103,6 @@ type opCode struct {
 	J2  int
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
 // sequenceMatcher compares sequence of strings. The basic
 // algorithm predates, and is a little fancier than, an algorithm
 // published in the late 1980's by Ratcliff and Obershelp under the
@@ -170,18 +156,12 @@ func (m *sequenceMatcher) setSeqs(a, b []string) {
 
 // Set the first sequence to be compared.
 func (m *sequenceMatcher) setSeq1(a []string) {
-	if &a == &m.a {
-		return
-	}
 	m.a = a
 	m.matchingBlocks, m.opCodes = nil, nil
 }
 
 // Set the second sequence to be compared.
 func (m *sequenceMatcher) setSeq2(b []string) {
-	if &b == &m.b {
-		return
-	}
 	m.b = b
 	m.matchingBlocks, m.opCodes, m.fullBCount = nil, nil, nil
 	m.chainB()

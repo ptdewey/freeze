@@ -17,11 +17,11 @@ import (
 var (
 	titleStyle = lipgloss.NewStyle().
 			Bold(true).
-			Foreground(lipgloss.AdaptiveColor{Light: "5", Dark: "5"}). // Magenta
+			Foreground(lipgloss.AdaptiveColor{Light: "8", Dark: "8"}).
 			Padding(0, 1)
 
 	counterStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.AdaptiveColor{Light: "8", Dark: "8"}). // Bright black/gray
+			Foreground(lipgloss.AdaptiveColor{Light: "5", Dark: "5"}).
 			Padding(0, 1)
 
 	helpStyle = lipgloss.NewStyle().
@@ -61,7 +61,7 @@ type model struct {
 	current      int
 	newSnap      *files.Snapshot
 	accepted     *files.Snapshot
-	diffLines    []pretty.DiffLine
+	diffLines    []diff.DiffLine
 	choice       string
 	done         bool
 	err          error
@@ -124,18 +124,8 @@ func (m *model) loadCurrentSnapshot() error {
 	return nil
 }
 
-func computeDiffLines(old, new *files.Snapshot) []pretty.DiffLine {
-	diffLines := diff.Histogram(old.Content, new.Content)
-	result := make([]pretty.DiffLine, len(diffLines))
-	for i, dl := range diffLines {
-		result[i] = pretty.DiffLine{
-			OldNumber: dl.OldNumber,
-			NewNumber: dl.NewNumber,
-			Line:      dl.Line,
-			Kind:      pretty.DiffKind(dl.Kind),
-		}
-	}
-	return result
+func computeDiffLines(old, new *files.Snapshot) []diff.DiffLine {
+	return diff.Histogram(old.Content, new.Content)
 }
 
 func (m model) Init() tea.Cmd {
@@ -337,10 +327,14 @@ func (m model) View() string {
 	}
 
 	// Header
+	snapshotTitle := m.snapshots[m.current] // fallback to test name
+	if m.newSnap != nil && m.newSnap.Title != "" {
+		snapshotTitle = m.newSnap.Title
+	}
 	header := lipgloss.JoinHorizontal(
 		lipgloss.Left,
-		titleStyle.Render("Review Snapshots "),
-		counterStyle.Render(fmt.Sprintf("[%d/%d] %s", m.current+1, len(m.snapshots), m.snapshots[m.current])),
+		titleStyle.Render("Review Snapshots"),
+		counterStyle.Render(fmt.Sprintf("[%d/%d] %s", m.current+1, len(m.snapshots), snapshotTitle)),
 	)
 	headerStyled := statusBarStyle.Width(m.width).Render(header)
 
@@ -373,13 +367,6 @@ func (m model) View() string {
 		viewportContent,
 		footerStyled,
 	)
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }
 
 func acceptAll() error {

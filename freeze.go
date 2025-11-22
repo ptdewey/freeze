@@ -21,6 +21,7 @@ func init() {
 	utter.Config.SortKeys = true
 }
 
+// SnapString takes a string value and creates a snapshot with the given title.
 func SnapString(t testingT, title string, content string) {
 	t.Helper()
 	SnapStringWithOptions(t, title, content, nil)
@@ -32,7 +33,7 @@ func SnapStringWithOptions(t testingT, title string, content string, opts []Snap
 	config := newSnapshotConfig(opts)
 
 	// Apply scrubbers to the content
-	scrubbedContent := transform.ApplyScrubbers(content, adaptScrubbers(config.Scrubbers))
+	scrubbedContent := transform.ApplyScrubbers(content, toTransformScrubbers(config.Scrubbers))
 
 	snap(t, title, scrubbedContent)
 }
@@ -54,8 +55,8 @@ func SnapJSONWithOptions(t testingT, title string, jsonStr string, opts []Snapsh
 
 	// Transform the JSON with ignore patterns and scrubbers
 	transformConfig := &transform.Config{
-		Scrubbers: adaptScrubbers(config.Scrubbers),
-		Ignore:    adaptIgnorePatterns(config.Ignore),
+		Scrubbers: toTransformScrubbers(config.Scrubbers),
+		Ignore:    toTransformIgnorePatterns(config.Ignore),
 	}
 
 	transformedJSON, err := transform.TransformJSON(jsonStr, transformConfig)
@@ -67,6 +68,8 @@ func SnapJSONWithOptions(t testingT, title string, jsonStr string, opts []Snapsh
 	snap(t, title, transformedJSON)
 }
 
+// Snap takes any values, formats them, and creates a snapshot with the given title.
+// For complex types, values are formatted using a pretty-printer.
 func Snap(t testingT, title string, values ...any) {
 	t.Helper()
 	SnapWithOptions(t, title, nil, values...)
@@ -81,7 +84,7 @@ func SnapWithOptions(t testingT, title string, opts []SnapshotOption, values ...
 	content := formatValues(values...)
 
 	// Apply scrubbers to the formatted content
-	scrubbedContent := transform.ApplyScrubbers(content, adaptScrubbers(config.Scrubbers))
+	scrubbedContent := transform.ApplyScrubbers(content, toTransformScrubbers(config.Scrubbers))
 
 	snap(t, title, scrubbedContent)
 }
@@ -131,7 +134,7 @@ func snapWithTitle(t testingT, title string, testName string, fileName string, c
 			return
 		}
 
-		diffLines := convertDiffLines(diff.Histogram(accepted.Content, snapshot.Content))
+		diffLines := diff.Histogram(accepted.Content, snapshot.Content)
 		fmt.Println(pretty.DiffSnapshotBox(accepted, snapshot, diffLines))
 		t.Error("snapshot mismatch - run 'freeze review' to update")
 		return
@@ -146,19 +149,6 @@ func snapWithTitle(t testingT, title string, testName string, fileName string, c
 	t.Error("new snapshot created - run 'freeze review' to accept")
 }
 
-func convertDiffLines(diffLines []diff.DiffLine) []pretty.DiffLine {
-	result := make([]pretty.DiffLine, len(diffLines))
-	for i, dl := range diffLines {
-		result[i] = pretty.DiffLine{
-			OldNumber: dl.OldNumber,
-			NewNumber: dl.NewNumber,
-			Line:      dl.Line,
-			Kind:      pretty.DiffKind(dl.Kind),
-		}
-	}
-	return result
-}
-
 func formatValues(values ...any) string {
 	var result string
 	for _, v := range values {
@@ -171,15 +161,17 @@ func formatValue(v any) string {
 	return utter.Sdump(v)
 }
 
-// DOCS:
+// Review launches an interactive review session to accept or reject snapshot changes.
 func Review() error {
 	return review.Review()
 }
 
+// AcceptAll accepts all pending snapshot changes without review.
 func AcceptAll() error {
 	return review.AcceptAll()
 }
 
+// RejectAll rejects all pending snapshot changes without review.
 func RejectAll() error {
 	return review.RejectAll()
 }
@@ -195,36 +187,21 @@ type testingT interface {
 	Cleanup(func())
 }
 
-// Adapter types to bridge freeze package types with transform package types
+// Type conversion helpers to bridge freeze package types with transform package types.
+// These work because the interfaces have identical method signatures (structural typing).
 
-type scrubberAdapter struct {
-	scrubber Scrubber
-}
-
-func (s *scrubberAdapter) Scrub(content string) string {
-	return s.scrubber.Scrub(content)
-}
-
-func adaptScrubbers(scrubbers []Scrubber) []transform.Scrubber {
+func toTransformScrubbers(scrubbers []Scrubber) []transform.Scrubber {
 	result := make([]transform.Scrubber, len(scrubbers))
 	for i, s := range scrubbers {
-		result[i] = &scrubberAdapter{scrubber: s}
+		result[i] = s
 	}
 	return result
 }
 
-type ignorePatternAdapter struct {
-	pattern IgnorePattern
-}
-
-func (i *ignorePatternAdapter) ShouldIgnore(key, value string) bool {
-	return i.pattern.ShouldIgnore(key, value)
-}
-
-func adaptIgnorePatterns(patterns []IgnorePattern) []transform.IgnorePattern {
+func toTransformIgnorePatterns(patterns []IgnorePattern) []transform.IgnorePattern {
 	result := make([]transform.IgnorePattern, len(patterns))
 	for i, p := range patterns {
-		result[i] = &ignorePatternAdapter{pattern: p}
+		result[i] = p
 	}
 	return result
 }

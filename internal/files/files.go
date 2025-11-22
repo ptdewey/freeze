@@ -64,35 +64,9 @@ func Deserialize(raw string) (*Snapshot, error) {
 	return snap, nil
 }
 
-// TODO: make snapshots in root vs package dirs a configurable option?
-func findProjectRoot() (string, error) {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-
-	current := cwd
-	for {
-		if _, err := os.Stat(filepath.Join(current, "go.mod")); err == nil {
-			return current, nil
-		}
-
-		parent := filepath.Dir(current)
-		if parent == current {
-			return "", fmt.Errorf("go.mod not found")
-		}
-		current = parent
-	}
-}
-
 func getSnapshotDir() (string, error) {
 	// NOTE: maybe this could be configurable?
 	// Storing snapshots in root may be desirable in some cases
-	// root, err := findProjectRoot()
-	// if err != nil {
-	// 	return "", err
-	// }
-	// snapshotDir := filepath.Join(root, "__snapshots__")
 	snapshotDir := "__snapshots__"
 	if err := os.MkdirAll(snapshotDir, 0755); err != nil {
 		return "", err
@@ -116,21 +90,26 @@ func SnapshotFileName(testName string) string {
 	return s
 }
 
+// getSnapshotFileName returns the filename for a snapshot based on test name and state
+func getSnapshotFileName(testName string, state string) string {
+	baseName := SnapshotFileName(testName)
+	switch state {
+	case "accepted":
+		return baseName + ".snap"
+	case "new":
+		return baseName + ".snap.new"
+	default:
+		return baseName + "." + state
+	}
+}
+
 func SaveSnapshot(snap *Snapshot, state string) error {
 	snapshotDir, err := getSnapshotDir()
 	if err != nil {
 		return err
 	}
 
-	var fileName string
-	switch state {
-	case "accepted":
-		fileName = SnapshotFileName(snap.Test) + ".snap"
-	case "new":
-		fileName = SnapshotFileName(snap.Test) + ".snap.new"
-	default:
-		fileName = SnapshotFileName(snap.Test) + "." + state
-	}
+	fileName := getSnapshotFileName(snap.Test, state)
 	filePath := filepath.Join(snapshotDir, fileName)
 
 	return os.WriteFile(filePath, []byte(snap.Serialize()), 0644)
@@ -142,15 +121,7 @@ func ReadSnapshot(testName string, state string) (*Snapshot, error) {
 		return nil, err
 	}
 
-	var fileName string
-	switch state {
-	case "accepted":
-		fileName = SnapshotFileName(testName) + ".snap"
-	case "new":
-		fileName = SnapshotFileName(testName) + ".snap.new"
-	default:
-		fileName = SnapshotFileName(testName) + "." + state
-	}
+	fileName := getSnapshotFileName(testName, state)
 	filePath := filepath.Join(snapshotDir, fileName)
 
 	data, err := os.ReadFile(filePath)

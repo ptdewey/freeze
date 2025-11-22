@@ -148,14 +148,6 @@ func TestTerminalWidth(t *testing.T) {
 	}
 }
 
-func TestClearScreen(t *testing.T) {
-	pretty.ClearScreen()
-}
-
-func TestClearLine(t *testing.T) {
-	pretty.ClearLine()
-}
-
 func contains(s, substr string) bool {
 	for i := 0; i <= len(s)-len(substr); i++ {
 		if s[i:i+len(substr)] == substr {

@@ -5,12 +5,6 @@ import (
 	"fmt"
 )
 
-// Config holds the transformation configuration.
-type Config struct {
-	Scrubbers []Scrubber
-	Ignore    []IgnorePattern
-}
-
 // Scrubber transforms content before snapshotting.
 type Scrubber interface {
 	Scrub(content string) string
@@ -19,6 +13,12 @@ type Scrubber interface {
 // IgnorePattern determines whether a key-value pair should be excluded.
 type IgnorePattern interface {
 	ShouldIgnore(key, value string) bool
+}
+
+// Config holds the transformation configuration.
+type Config struct {
+	Scrubbers []Scrubber
+	Ignore    []IgnorePattern
 }
 
 // ApplyScrubbers applies all scrubbers to the content in order.
